@@ -1,0 +1,32 @@
+# t-node 
+# [ a/lex.rf a-node $a := 
+#      [ m/tag = "PRP" ] ];
+#   >> for $a.m/lemma give $1,count() sort by $2
+
+# ya  1
+his 1
+# thyself 1
+# mine    1
+'em 3
+# 's  3
+theirs  3
+herself 4
+# myself  5
+# ourselves   6
+# yourself    6
+# one 16
+himself 47
+themselves  55
+# me  56
+her 58
+itself  76
+# us  103
+him 148
+she 277
+them    305
+# you 347
+# i   566
+# we  628
+they    1129
+he  1651
+it  2467

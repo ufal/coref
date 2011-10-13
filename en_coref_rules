@@ -1,0 +1,30 @@
+TYP ANAFORY
+
+TREEX
+
+----------------------
+
+relativni zajmenna anafora
+
+anafor: tag =~ /^W/ (WP, WP$, WRB, WDT)
+antecedent: parent of a clause head. the parent can't be a technical root and a
+tag of the lexical anode must be =~ /^(NN|PR|DT)/
+rule for every tree
+
+----------------------
+
+nulova anafora kontroly
+
+anafor: vytvoreny novy syn #Cor pre uzly s formemom =~ /inf/
+antecedent: ak otec infinitivu nie je root, zober efektivneho rodica tohto
+otca (dedo). ante je efektivne dieta deda s formemom =~ "n:obj"|"n:subj" v
+zavislosti na t_lemmatu deda.
+rule for every tree
+
+----------------------
+
+textova osobni zajmenna koreference
+
+anafor: t_lemma = #PersPron & formeme =~ /poss/
+antecedent: najblizsie sem. substantivum z predchadzajuceho kontextu v
+rovnakej vete, ktore sa zhoduje v cisle a osobe

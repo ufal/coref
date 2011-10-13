@@ -1,0 +1,13 @@
+Treex      = mnovak@dvalin:~/projects/czeng_my$         make eval_text
+Linh (DEV) = mnovak@dvalin:~/projects/czeng_my/linh$    btred -I Test_coref_features_perc-sorted.btred -l ~/projects/czeng_my/sample.data.list
+
+- measuring method modified
+    - an antecedent is true positive if it belongs to the preceding coreference
+      chain
+    - recall is calculated not from all text.coref nodes, but from all
+      predicted anaphors (some of them are erroneously predicted)
+
+Treex (DEV): P: 67.94% (1331 / 1959) R: 68.50% (1331 / 1943) F: 68.22%
+Linh (DEV) : precision = 76.7857142857143%  recall = 77.3778920308483% f-measure = 77.0806658130602% (1505 1960    1945)
+
+

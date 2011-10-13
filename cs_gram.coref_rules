@@ -1,0 +1,63 @@
+TYP ANAFORY
+
+NGUY (2006)
+
+KUCOVA ET AL. (2004)
+
+TREEX_ORIG: 
+sample PDT results: P: 100.00% (64 / 64)    R: 37.87% (64 / 169)    F: 54.94%
+
+----------------------
+
+reflexivna zajmenna anafora
+
+anafor: refl. zameno
+ante_kand: efekt. potomok & sem. substantivum najblizsieho urciteho slovesa
+alebo uzlu s funktorom DENOM nad anaforom
+
+se/si: subjekt ridiciho slovesa klauze; svuj: subjekt ridiciho slovesa klauze
++ subjekt slovesa kontroly, kde je kontrolujicim clenem jiny aktant nez aktant
+odpovidajici subjektu + nemusi byt subjekt, u klauzi se slovesem v 3. osobe
+- frazemy (funktor DPHR) - eticky dativ s funktorom BEN
+
+effective child of clause head, whose formeme is "n:1"
+
+----------------------
+
+relativni zajmenna anafora (!coz)
+
+anafor: vztazna zajmena, vztazna zajmenna adverbia, vztazne zajmenne cislovky
+(gramatem "indeftype" s hodnotou "relat") - frazem, eticky dativ, falesny
+podmet, soucast ustaleneho spojeni (funktor ETHD, DPHR, INTF) - lemma = což
+antecedent: efektivni rodic nejblizsiho urciteho slovesa nad anaforom (if
+count(ef_par) = 1); nejblizsi uzel, v ktoreho podstrome jsou vsechny efektivni
+rodice (count(ef_par) > 1)
+
+antecedent: substantivum nebo zajmeno nad nejblizsim uzel s funktorem RSTR
+
+anafor: tag =~ /^.[149EJK\?]/
+antecedent: parent of a clause head. the parent can't be a root and a tag of
+the lexical anode must be =~ /^(NN|PR|DT)/
+rule for every node
+
+----------------------
+
+relativni zajmenna anafora (coz)
+
+anafor: lemma což
+antecedent: levy bratr od rodice "coz" (if parent(parent("coz")) = ","|"-")
+nejblizsi (dle ORD) urcite sloveso (otherwise), napr.
+Ba da se rici, ze <minuly> takrka nepozorovane. <Coz> je na vychodoasijske
+pomery velmi, velmi zvlastni.
+
+antecedent: leva sestra uzlu slovesa, na kterem "coz" zavisi (v ramci vety)
+ridici sloveso cele predchozi vety (medzi vetami), napr.
+Právě vedoucí týmu Motorsport Škoda Pavel Janeba jen <pokrčil> rameny na otázku,
+jak dopadlo jednání uvnitř koncernu VW, které soutěže v příštím roce jeho tým
+absolvuje a které ne a kolik jich dohromady bude, jaká bude celková strategie.
+<Což> znamená, že vše je zatím ve hvězdách.
+
+anafor: tag =~ /^.[149EJK\?]/ (E is "coz")
+antecedent: parent of a clause head. the parent can't be a root and a tag of
+the lexical anode must be =~ /^(NN|PR|DT)/
+rule for every node

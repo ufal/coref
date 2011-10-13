@@ -1,0 +1,2 @@
+these statistics were measured on the data comprised in the list, which is an output of the following command:
+find /net/work/people/mnovak/data/czeng_my/en/pedt -regex ".*pedt/0.*\.t\.gz" | sort > data/en/train.list

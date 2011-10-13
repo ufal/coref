@@ -1,0 +1,30 @@
+Original
+
+P: 100.00% (64 / 64)    R: 37.87% (64 / 169)    F: 54.94%
+
+=============================================================================================
+
+A2T::CS::MarkRelClauseCoref
+
+- splitted to cases without (tag =~ /^.[149JK\?]/) and with a pronoun "coz" (tag =~ /^.E/)
+- "coz" case unimplemented
+- non-"coz" case implemented according to Linh (2006)
+
+P: 98.67% (74 / 75) R: 43.79% (74 / 169)    F: 60.66%
+
+=============================================================================================
+
+A2T::CS::MarkRelClauseCoref
+
+- "coz" case within the sentence implemented according to Linh (2006)
+
+P: 98.78% (81 / 82) R: 47.93% (81 / 169)    F: 64.54%
+
+=============================================================================================
+
+A2T::CS::MarkRelClauseCoref
+
+- "coz" aiming into the previous sentence results in performance drop in both
+  variants of implementation: Linh (2006) and Kucova et al. (2004)
+
+P: 97.59% (81 / 83) R: 47.93% (81 / 169)    F: 64.29%

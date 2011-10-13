@@ -1,0 +1,21 @@
+# t-node 
+# [ a/lex.rf a-node $a := 
+# [ m/tag = "PRP" ], 
+# coref_text.rf t-node [  ] ];
+# >> for $a.m/lemma give $1,count() sort by $2
+
+'em 1
+his 1
+herself 2
+i   2
+theirs  3
+himself 32
+themselves  33
+itself  47
+her 54
+him 141
+she 258
+them    270
+they    1005
+he  1487
+it  1914
