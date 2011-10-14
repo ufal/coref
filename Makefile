@@ -1,3 +1,10 @@
+sort_coref_chains:
+	treex -Lcs -Ssrc \
+	Read::PDT from=@data/cs/one.data.list schema_dir=/net/work/people/mnovak/schemas \
+	A2T::SetDocOrds \
+	A2T::RearrangeCorefLinks retain_cataphora=1 \
+	Write::Treex to=sorted_chains.treex
+
 suggest_breaks:
 	treex -Lcs -Ssrc \
 	Read::PDT from=@data/cs/one.data.list schema_dir=/net/work/people/mnovak/schemas \
@@ -18,14 +25,15 @@ eval_gram:
 eval_text: 
 	#treex -Lcs -Ssrc
 	treex -p --jobs 50 -Lcs -Ssrc \
-	Read::PDT from=@data/dev.data.list schema_dir=/net/work/people/mnovak/schemas \
+	Read::PDT from=@data/cs/dev.data.list schema_dir=/net/work/people/mnovak/schemas \
 	T2T::CopyTtree source_selector=src selector=ref \
 	A2T::StripCoref type=text selector=src \
 	A2T::CS::MarkClauseHeads \
 	T2T::SetClauseNumber \
+	A2T::SetDocOrds \
 	A2T::CS::MarkTextPronCoref \
-	Eval::Coref just_counts=1 type=text selector=ref > data/results.dev
-	./eval.pl < data/results.dev
+	Eval::Coref just_counts=1 type=text selector=ref > data/cs/results.dev
+	./eval.pl < data/cs/results.dev
 
 print_coref_data_one: 
 	treex -Lcs \
