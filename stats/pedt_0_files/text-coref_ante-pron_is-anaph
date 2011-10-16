@@ -1,0 +1,15 @@
+# t-node $anaph := 
+# [ coref_text.rf t-node $ante := 
+#      [ coref_text.rf t-node [  ], 
+#           a/lex.rf a-node $a := 
+#           [ m/tag ~ "^P" ] ] ];
+# t-node $anaph := 
+# [ coref_text.rf t-node $ante := 
+#      [ coref_gram.rf t-node [  ], 
+#           a/lex.rf a-node $a := 
+#           [ m/tag ~ "^P" ] ] ];
+
+coref_text 2518
+gram_text    38
+both          3 
+none         41

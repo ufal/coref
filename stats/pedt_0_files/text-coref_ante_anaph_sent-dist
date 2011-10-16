@@ -1,0 +1,17 @@
+# t-node $anaph := 
+# [ coref_text.rf t-node $ante := [ ]];
+#   >> for (tree_no($ante) - tree_no($anaph)) give distinct $1,count() sort by $1
+
+-12 1
+-8  1
+-6  4
+-5  3
+-4  13
+-3  28
+-2  136
+-1  2103
+0   7374
+1   17
+2   2
+3   3
+4   1

@@ -1,0 +1,29 @@
+# t-node $anaph := 
+# [ coref_text.rf t-node $ante := 
+#      [ a/lex.rf a-node $a := 
+#           [ m/tag ~ "^P" ] ] ];
+#   >> for $a.m/lemma give distinct $1,count() sort by $2 desc
+
+he  618
+it  540
+his 321
+they    288
+its 272
+she 144
+their   131
+her 87
+them    59
+him 54
+itself  18
+himself 17
+themselves  15
+i   12
+we  7
+you 5
+herself 3
+our 2
+me  2
+one 2
+us  1
+'em 1
+theirs  1
