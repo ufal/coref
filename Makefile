@@ -1,3 +1,10 @@
+TEST_SET = sample
+#TEST_SET = dev
+
+ifeq (${TEST_SET}, dev)
+CLUSTER_FLAGS = -p --jobs 50
+endif
+
 sort_coref_chains:
 	treex -Lcs -Ssrc \
 	Read::PDT from=@data/cs/one.data.list schema_dir=/net/work/people/mnovak/schemas \
@@ -22,18 +29,18 @@ eval_gram:
 	A2T::CS::MarkRelClauseCoref \
 	Eval::Coref type=gram selector=ref
 
+#treex -p --jobs 50 -Lcs -Ssrc 
 eval_text: 
-	#treex -Lcs -Ssrc
-	treex -p --jobs 50 -Lcs -Ssrc \
-	Read::PDT from=@data/cs/dev.data.list schema_dir=/net/work/people/mnovak/schemas \
+	treex ${CLUSTER_FLAGS} -Lcs -Ssrc \
+	Read::PDT from=@data/cs/${TEST_SET}.data.list schema_dir=/net/work/people/mnovak/schemas \
 	T2T::CopyTtree source_selector=src selector=ref \
 	A2T::StripCoref type=text selector=src \
 	A2T::CS::MarkClauseHeads \
 	T2T::SetClauseNumber \
 	A2T::SetDocOrds \
 	A2T::CS::MarkTextPronCoref \
-	Eval::Coref just_counts=1 type=text selector=ref > data/cs/results.dev
-	./eval.pl < data/cs/results.dev
+	Eval::Coref just_counts=1 type=text selector=ref > data/cs/results.${TEST_SET}
+	./eval.pl < data/cs/results.${TEST_SET}
 
 print_coref_data_one: 
 	treex -Lcs \
