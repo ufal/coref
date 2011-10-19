@@ -39,23 +39,25 @@ eval_text:
 	T2T::SetClauseNumber \
 	A2T::SetDocOrds \
 	A2T::CS::MarkTextPronCoref \
-	Eval::Coref just_counts=1 type=text selector=ref > data/cs/results.${TEST_SET}
+	Eval::Coref just_counts=1 type=text anaphor_type=pron selector=ref > data/cs/results.${TEST_SET}
 	./eval.pl < data/cs/results.${TEST_SET}
 
 print_coref_data_one: 
 	treex -Lcs \
-	Read::PDT from=@data/one.data.list schema_dir=/net/work/people/mnovak/schemas \
+	Read::PDT from=@data/cs/one.data.list schema_dir=/net/work/people/mnovak/schemas \
 	A2T::CS::MarkClauseHeads \
+	A2T::SetDocOrds \
 	T2T::SetClauseNumber \
-	Print::TextPronCorefData > data/one.data
+	Print::CS::TextPronCorefData > data/cs/one.data
 
-print_coref_data: data/train.data
-data/train.data : data/train.data.list
+print_coref_data: data/cs/train.data
+data/cs/train.data : data/cs/train.data.list
 	treex -p --jobs 50 -Lcs \
-	Read::PDT from=@data/train.data.list schema_dir=/net/work/people/mnovak/schemas \
+	Read::PDT from=@data/cs/train.data.list schema_dir=/net/work/people/mnovak/schemas \
 	A2T::CS::MarkClauseHeads \
+	A2T::SetDocOrds \
 	T2T::SetClauseNumber \
-	Print::TextPronCorefData > data/train.data
+	Print::CS::TextPronCorefData > data/cs/train.data
 
 data/train.data.linh : data/train.data.list
 	jtred -l data/train.data.list -jb -I linh/Print_coref_features_perc.btred > data/train.data.linh
@@ -87,9 +89,9 @@ test_linh : linh/Extract_perceptron_weights_sorted.pm
 	jtred -l data/dev.data.list -jb -I linh/Test_coref_features_perc-sorted.btred > data/results.linh.dev
 	./eval.pl < data/results.linh.dev
 
-data/model.train : data/train.data
-	${TMT_ROOT}/tools/reranker/train -loglevel:FINE -normalizer:dummy data/train.data | zcat > data/model.train
+data/cs/model.train : data/cs/train.data
+	${TMT_ROOT}/tools/reranker/train -loglevel:FINE -normalizer:dummy data/cs/train.data | zcat > data/cs/model.train
 
-update_model : data/model.train
-	cp data/model.train /net/projects/tectomt_shared/data/models/coreference/CS/perceptron/text.perspron.gold
-	rm ${TMT_ROOT}/share/data/models/coreference/CS/perceptron/text.perspron.gold
+update_model : data/cs/model.train
+	cp data/cs/model.train /net/projects/tectomt_shared/data/models/coreference/CS/perceptron/text.perspron.gold
+	cp data/cs/model.train ${TMT_ROOT}/share/data/models/coreference/CS/perceptron/text.perspron.gold

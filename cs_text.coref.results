@@ -10,4 +10,13 @@ Linh (DEV) = mnovak@dvalin:~/projects/czeng_my/linh$    btred -I Test_coref_feat
 Treex (DEV): P: 67.94% (1331 / 1959) R: 68.50% (1331 / 1943) F: 68.22%
 Linh (DEV) : precision = 76.7857142857143%  recall = 77.3778920308483% f-measure = 77.0806658130602% (1505 1960    1945)
 
+- porting of coreference module finished
+- some of adjustments done just to match with Linh's implementation
+- measuring method modified
+    - just nodes that are 3rd person persprons (anaph filter) are taken into accoutn
 
+Treex (DEV): P: 74.94% (1468 / 1959)    R: 75.51% (1468 / 1944) F: 75.22%
+
+- joint anaphor identification and antecedent selection
+
+Treex (DEV): P: 78.24% (1471 / 1880) R: 75.67% (1471 / 1944) F: 76.94%
