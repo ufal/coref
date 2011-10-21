@@ -1,8 +1,10 @@
-TEST_SET = sample
-#TEST_SET = dev
+DATA_SET = sample
+FEAT_ORIGIN = gener
+#FEAT_ORIGIN = gold
+#DATA_SET = dev
 
-ifeq (${TEST_SET}, dev)
-CLUSTER_FLAGS = -p --jobs 50
+ifneq (${DATA_SET}, sample)
+CLUSTER_FLAGS = -p --qsub '-l mem_free=2G -l act_mem_free=2G' --jobs 50
 endif
 
 sort_coref_chains:
@@ -32,15 +34,15 @@ eval_gram:
 #treex -p --jobs 50 -Lcs -Ssrc 
 eval_text: 
 	treex ${CLUSTER_FLAGS} -Lcs -Ssrc \
-	Read::PDT from=@data/cs/${TEST_SET}.data.list schema_dir=/net/work/people/mnovak/schemas \
+	Read::PDT from=@data/cs/${DATA_SET}.data.list schema_dir=/net/work/people/mnovak/schemas \
 	T2T::CopyTtree source_selector=src selector=ref \
 	A2T::StripCoref type=text selector=src \
 	A2T::CS::MarkClauseHeads \
 	T2T::SetClauseNumber \
 	A2T::SetDocOrds \
 	A2T::CS::MarkTextPronCoref \
-	Eval::Coref just_counts=1 type=text anaphor_type=pron selector=ref > data/cs/results.${TEST_SET}
-	./eval.pl < data/cs/results.${TEST_SET}
+	Eval::Coref just_counts=1 type=text anaphor_type=pron selector=ref > data/cs/results.${DATA_SET}
+	./eval.pl < data/cs/results.${DATA_SET}
 
 print_coref_data_one: 
 	treex -Lcs \
@@ -95,3 +97,34 @@ data/cs/model.train : data/cs/train.data
 update_model : data/cs/model.train
 	cp data/cs/model.train /net/projects/tectomt_shared/data/models/coreference/CS/perceptron/text.perspron.gold
 	cp data/cs/model.train ${TMT_ROOT}/share/data/models/coreference/CS/perceptron/text.perspron.gold
+
+data/cs/model.train.analysed : data/cs/train.analysed.list
+	${TMT_ROOT}/tools/reranker/train -loglevel:FINE -normalizer:dummy data/cs/train.data | zcat > data/cs/model.train
+
+#update_model : data/cs/model.train.analysed
+#	cp data/cs/model.train /net/projects/tectomt_shared/data/models/coreference/CS/perceptron/text.perspron.gold
+#	cp data/cs/model.train ${TMT_ROOT}/share/data/models/coreference/CS/perceptron/text.perspron.gold
+
+	#A2A::CopyAtree source_language=cs source_selector=ref flatten=1 align=1 
+prepare_auto_data : data/cs/${DATA_SET}.analysed.list
+
+data/cs/${DATA_SET}.analysed.list : data/cs/${DATA_SET}.data.list
+	treex ${CLUSTER_FLAGS} -Lcs -Sref \
+	Read::PDT from=@data/cs/${DATA_SET}.data.list schema_dir=/net/work/people/mnovak/schemas \
+	A2W::Detokenize \
+	Util::SetGlobal language=cs selector=src \
+	W2W::CopySentence source_language=cs source_selector=ref \
+	analysis.scen \
+	Util::SetGlobal language=cs selector=ref \
+	Align::A::MonolingualGreedy to_language=cs to_selector=src \
+	Align::T::CopyAlignmentFromAlayer to_language=cs to_selector=src \
+	Write::Treex path=data/cs/analysed/${DATA_SET}
+	ls data/cs/analysed/${DATA_SET}/*.treex.gz > data/cs/${DATA_SET}.analysed.list
+
+eval_text_gener : data/cs/${DATA_SET}.analysed.list
+	treex ${CLUSTER_FLAGS} -Lcs -Ssrc \
+	Read::Treex from=@data/cs/${DATA_SET}.analysed.list \
+	A2T::CS::MarkTextPronCoref \
+	A2T::RearrangeCorefLinks retain_cataphora=1 \
+	Eval::Coref just_counts=1 type=text anaphor_type=pron selector=ref > data/cs/results.${DATA_SET}
+	./eval.pl < data/cs/results.${DATA_SET}

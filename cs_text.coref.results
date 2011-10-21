@@ -20,3 +20,10 @@ Treex (DEV): P: 74.94% (1468 / 1959)    R: 75.51% (1468 / 1944) F: 75.22%
 - joint anaphor identification and antecedent selection
 
 Treex (DEV): P: 78.24% (1471 / 1880) R: 75.67% (1471 / 1944) F: 76.94%
+
+- testing on generated features, however the model has been trained on golden ones
+
+Treex (DEV): P: 53.37% (325 / 609)   R: 16.72% (325 / 1944)  F: 25.46%
+    - almost all "is_generated=1" nodes are missing in the automatic data (1226 / 1228) or are not aligned
+Treex (SAMPLE): P: 62.86% (22 / 35) R: 20.75% (22 / 106)    F: 31.21%
+    - ("is_generated"/"is_missing") = (58/58)
