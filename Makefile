@@ -3,6 +3,9 @@ FEAT_ORIGIN = gener
 #FEAT_ORIGIN = gold
 #DATA_SET = dev
 
+LANGUAGE=cs
+LANGUAGE_UPPER=`echo ${LANGUAGE} | tr 'a-z' 'A-Z'`
+
 ifneq (${DATA_SET}, sample)
 CLUSTER_FLAGS = -p --qsub '-l mem_free=2G -l act_mem_free=2G' --jobs 50
 endif
@@ -33,16 +36,16 @@ eval_gram:
 
 #treex -p --jobs 50 -Lcs -Ssrc 
 eval_text: 
-	treex ${CLUSTER_FLAGS} -Lcs -Ssrc \
-	Read::PDT from=@data/cs/${DATA_SET}.data.list schema_dir=/net/work/people/mnovak/schemas \
+	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
+	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.data.list schema_dir=/net/work/people/mnovak/schemas \
 	T2T::CopyTtree source_selector=src selector=ref \
 	A2T::StripCoref type=text selector=src \
-	A2T::CS::MarkClauseHeads \
+	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
 	T2T::SetClauseNumber \
 	A2T::SetDocOrds \
-	A2T::CS::MarkTextPronCoref \
-	Eval::Coref just_counts=1 type=text anaphor_type=pron selector=ref > data/cs/results.${DATA_SET}
-	./eval.pl < data/cs/results.${DATA_SET}
+	A2T::${LANGUAGE_UPPER}::MarkTextPronCoref \
+	Eval::Coref just_counts=1 type=text anaphor_type=pron selector=ref > data/${LANGUAGE}/results.${DATA_SET}
+	./eval.pl < data/${LANGUAGE}/results.${DATA_SET}
 
 print_coref_data_one: 
 	treex -Lcs \
@@ -52,14 +55,17 @@ print_coref_data_one:
 	T2T::SetClauseNumber \
 	Print::CS::TextPronCorefData > data/cs/one.data
 
-print_coref_data: data/cs/train.data
-data/cs/train.data : data/cs/train.data.list
-	treex -p --jobs 50 -Lcs \
-	Read::PDT from=@data/cs/train.data.list schema_dir=/net/work/people/mnovak/schemas \
-	A2T::CS::MarkClauseHeads \
+print_coref_data: data/${LANGUAGE}/train.data
+	
+	#treex -L${LANGUAGE}
+
+data/${LANGUAGE}/train.data : data/${LANGUAGE}/train.data.list
+	treex -p --jobs 50 -L${LANGUAGE} \
+	Read::PDT from=@data/${LANGUAGE}/train.data.list schema_dir=/net/work/people/mnovak/schemas \
+	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
 	A2T::SetDocOrds \
 	T2T::SetClauseNumber \
-	Print::CS::TextPronCorefData > data/cs/train.data
+	Print::${LANGUAGE_UPPER}::TextPronCorefData > data/cs/train.data
 
 data/train.data.linh : data/train.data.list
 	jtred -l data/train.data.list -jb -I linh/Print_coref_features_perc.btred > data/train.data.linh
@@ -91,12 +97,14 @@ test_linh : linh/Extract_perceptron_weights_sorted.pm
 	jtred -l data/dev.data.list -jb -I linh/Test_coref_features_perc-sorted.btred > data/results.linh.dev
 	./eval.pl < data/results.linh.dev
 
-data/cs/model.train : data/cs/train.data
-	${TMT_ROOT}/tools/reranker/train -loglevel:FINE -normalizer:dummy data/cs/train.data | zcat > data/cs/model.train
+data/${LANGUAGE}/model.train : data/${LANGUAGE}/train.data
+	${TMT_ROOT}/tools/reranker/train -loglevel:FINE -normalizer:dummy data/${LANGUAGE}/train.data | zcat > data/${LANGUAGE}/model.train
 
-update_model : data/cs/model.train
-	cp data/cs/model.train /net/projects/tectomt_shared/data/models/coreference/CS/perceptron/text.perspron.gold
-	cp data/cs/model.train ${TMT_ROOT}/share/data/models/coreference/CS/perceptron/text.perspron.gold
+update_model : data/${LANGUAGE}/model.train
+	mkdir -p /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/
+	cp data/${LANGUAGE}/model.train /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.gold
+	mkdir ${TMT_ROOT}/share/data/models/coreference/${LANGUAGE_UPPER}/perceptron/
+	cp data/${LANGUAGE}/model.train ${TMT_ROOT}/share/data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.gold
 
 data/cs/model.train.analysed : data/cs/train.analysed.list
 	${TMT_ROOT}/tools/reranker/train -loglevel:FINE -normalizer:dummy data/cs/train.data | zcat > data/cs/model.train
