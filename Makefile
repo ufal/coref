@@ -6,6 +6,10 @@ FEAT_ORIGIN = gener
 LANGUAGE=cs
 LANGUAGE_UPPER=`echo ${LANGUAGE} | tr 'a-z' 'A-Z'`
 
+ifeq (${LANGUAGE}, en)
+PREPROC_BLOCKS = W2A::EN::SetAfunAuxCPCoord W2A::EN::SetAfun A2T::EN::SetGrammatemes
+endif
+
 ifneq (${DATA_SET}, sample)
 CLUSTER_FLAGS = -p --qsub '-l mem_free=2G -l act_mem_free=2G' --jobs 50
 endif
@@ -35,9 +39,11 @@ eval_gram:
 	Eval::Coref type=gram selector=ref
 
 #treex -p --jobs 50 -Lcs -Ssrc 
+	#A2T::EN::FindTextCoref 
 eval_text: 
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
 	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.data.list schema_dir=/net/work/people/mnovak/schemas \
+	${PREPROC_BLOCKS} \
 	T2T::CopyTtree source_selector=src selector=ref \
 	A2T::StripCoref type=text selector=src \
 	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
@@ -56,16 +62,15 @@ print_coref_data_one:
 	Print::CS::TextPronCorefData > data/cs/one.data
 
 print_coref_data: data/${LANGUAGE}/train.data
-	
-	#treex -L${LANGUAGE}
 
 data/${LANGUAGE}/train.data : data/${LANGUAGE}/train.data.list
 	treex -p --jobs 50 -L${LANGUAGE} \
 	Read::PDT from=@data/${LANGUAGE}/train.data.list schema_dir=/net/work/people/mnovak/schemas \
+	${PREPROC_BLOCKS} \
 	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
 	A2T::SetDocOrds \
 	T2T::SetClauseNumber \
-	Print::${LANGUAGE_UPPER}::TextPronCorefData > data/cs/train.data
+	Print::${LANGUAGE_UPPER}::TextPronCorefData > data/${LANGUAGE}/train.data
 
 data/train.data.linh : data/train.data.list
 	jtred -l data/train.data.list -jb -I linh/Print_coref_features_perc.btred > data/train.data.linh
@@ -101,9 +106,9 @@ data/${LANGUAGE}/model.train : data/${LANGUAGE}/train.data
 	${TMT_ROOT}/tools/reranker/train -loglevel:FINE -normalizer:dummy data/${LANGUAGE}/train.data | zcat > data/${LANGUAGE}/model.train
 
 update_model : data/${LANGUAGE}/model.train
-	mkdir -p /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/
+	-mkdir -p /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/
 	cp data/${LANGUAGE}/model.train /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.gold
-	mkdir ${TMT_ROOT}/share/data/models/coreference/${LANGUAGE_UPPER}/perceptron/
+	-mkdir -p ${TMT_ROOT}/share/data/models/coreference/${LANGUAGE_UPPER}/perceptron/
 	cp data/${LANGUAGE}/model.train ${TMT_ROOT}/share/data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.gold
 
 data/cs/model.train.analysed : data/cs/train.analysed.list
