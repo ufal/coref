@@ -1,5 +1,5 @@
 DATA_SET = sample
-FEAT_ORIGIN = gener
+ANOT = analysed
 #FEAT_ORIGIN = gold
 #DATA_SET = dev
 
@@ -11,7 +11,7 @@ PREPROC_BLOCKS = W2A::EN::SetAfunAuxCPCoord W2A::EN::SetAfun A2T::EN::SetGrammat
 endif
 
 ifneq (${DATA_SET}, sample)
-CLUSTER_FLAGS = -p --qsub '-l mem_free=2G -l act_mem_free=2G' --jobs 50
+CLUSTER_FLAGS = -p --qsub '-hard -l mem_free=6G -l act_mem_free=6G' --jobs 50
 endif
 
 sort_coref_chains:
@@ -61,16 +61,26 @@ print_coref_data_one:
 	T2T::SetClauseNumber \
 	Print::CS::TextPronCorefData > data/cs/one.data
 
-print_coref_data: data/${LANGUAGE}/train.data
+remove_gold_coref_data: 
+	rm data/${LANGUAGE}/train.gold
+print_gold_coref_data: data/${LANGUAGE}/train.gold
 
-data/${LANGUAGE}/train.data : data/${LANGUAGE}/train.data.list
+data/${LANGUAGE}/train.gold : data/${LANGUAGE}/train.data.list
 	treex -p --jobs 50 -L${LANGUAGE} \
 	Read::PDT from=@data/${LANGUAGE}/train.data.list schema_dir=/net/work/people/mnovak/schemas \
 	${PREPROC_BLOCKS} \
 	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
 	A2T::SetDocOrds \
 	T2T::SetClauseNumber \
-	Print::${LANGUAGE_UPPER}::TextPronCorefData > data/${LANGUAGE}/train.data
+	Print::${LANGUAGE_UPPER}::TextPronCorefData > data/${LANGUAGE}/train.gold
+
+print_system_coref_data: data/${LANGUAGE}/train.analysed
+
+data/${LANGUAGE}/train.analysed : data/${LANGUAGE}/train.analysed.list
+	treex -p --jobs 50 -L${LANGUAGE} \
+	Read::Treex from=@data/${LANGUAGE}/train.analysed.list \
+	T2T::CopyCorefFromAlignment type=text selector=ref \
+	Print::${LANGUAGE_UPPER}::TextPronCorefData selector=src > data/${LANGUAGE}/train.analysed
 
 data/train.data.linh : data/train.data.list
 	jtred -l data/train.data.list -jb -I linh/Print_coref_features_perc.btred > data/train.data.linh
@@ -102,42 +112,40 @@ test_linh : linh/Extract_perceptron_weights_sorted.pm
 	jtred -l data/dev.data.list -jb -I linh/Test_coref_features_perc-sorted.btred > data/results.linh.dev
 	./eval.pl < data/results.linh.dev
 
-data/${LANGUAGE}/model.train : data/${LANGUAGE}/train.data
-	${TMT_ROOT}/tools/reranker/train -loglevel:FINE -normalizer:dummy data/${LANGUAGE}/train.data | zcat > data/${LANGUAGE}/model.train
+data/${LANGUAGE}/model.train.${ANOT} : data/${LANGUAGE}/train.${ANOT}
+	${TMT_ROOT}/tools/reranker/train -loglevel:FINE -normalizer:dummy data/${LANGUAGE}/train.${ANOT} | zcat > data/${LANGUAGE}/model.train.${ANOT}
 
-update_model : data/${LANGUAGE}/model.train
-	-mkdir -p /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/
-	cp data/${LANGUAGE}/model.train /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.gold
+update_model : data/${LANGUAGE}/model.train.${ANOT}
+	#-mkdir -p /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/
+	#cp data/${LANGUAGE}/model.train.${ANOT} /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT}
 	-mkdir -p ${TMT_ROOT}/share/data/models/coreference/${LANGUAGE_UPPER}/perceptron/
-	cp data/${LANGUAGE}/model.train ${TMT_ROOT}/share/data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.gold
-
-data/cs/model.train.analysed : data/cs/train.analysed.list
-	${TMT_ROOT}/tools/reranker/train -loglevel:FINE -normalizer:dummy data/cs/train.data | zcat > data/cs/model.train
+	cp data/${LANGUAGE}/model.train.${ANOT} ${TMT_ROOT}/share/data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT}
 
 #update_model : data/cs/model.train.analysed
 #	cp data/cs/model.train /net/projects/tectomt_shared/data/models/coreference/CS/perceptron/text.perspron.gold
 #	cp data/cs/model.train ${TMT_ROOT}/share/data/models/coreference/CS/perceptron/text.perspron.gold
 
 	#A2A::CopyAtree source_language=cs source_selector=ref flatten=1 align=1 
-prepare_auto_data : data/cs/${DATA_SET}.analysed.list
+prepare_auto_data : data/${LANGUAGE}/${DATA_SET}.analysed.list
 
-data/cs/${DATA_SET}.analysed.list : data/cs/${DATA_SET}.data.list
-	treex ${CLUSTER_FLAGS} -Lcs -Sref \
-	Read::PDT from=@data/cs/${DATA_SET}.data.list schema_dir=/net/work/people/mnovak/schemas \
+data/${LANGUAGE}/${DATA_SET}.analysed.list : data/${LANGUAGE}/${DATA_SET}.data.list
+	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Sref \
+	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.data.list schema_dir=/net/work/people/mnovak/schemas \
 	A2W::Detokenize \
-	Util::SetGlobal language=cs selector=src \
-	W2W::CopySentence source_language=cs source_selector=ref \
-	analysis.scen \
-	Util::SetGlobal language=cs selector=ref \
-	Align::A::MonolingualGreedy to_language=cs to_selector=src \
-	Align::T::CopyAlignmentFromAlayer to_language=cs to_selector=src \
-	Write::Treex path=data/cs/analysed/${DATA_SET}
-	ls data/cs/analysed/${DATA_SET}/*.treex.gz > data/cs/${DATA_SET}.analysed.list
+	Util::SetGlobal language=${LANGUAGE} selector=src \
+	W2W::CopySentence source_language=${LANGUAGE} source_selector=ref \
+	analysis.${LANGUAGE}.scen \
+	Util::SetGlobal language=${LANGUAGE} selector=ref \
+	Align::A::MonolingualGreedy to_language=${LANGUAGE} to_selector=src \
+	Align::T::CopyAlignmentFromAlayer to_language=${LANGUAGE} to_selector=src \
+	Write::Treex path=data/${LANGUAGE}/analysed/${DATA_SET}
+	ls data/${LANGUAGE}/analysed/${DATA_SET}/*.treex.gz > data/${LANGUAGE}/${DATA_SET}.analysed.list
 
 eval_text_gener : data/cs/${DATA_SET}.analysed.list
 	treex ${CLUSTER_FLAGS} -Lcs -Ssrc \
 	Read::Treex from=@data/cs/${DATA_SET}.analysed.list \
-	A2T::CS::MarkTextPronCoref \
+	A2T::CS::MarkTextPronCoref model_path=data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT} \
 	A2T::RearrangeCorefLinks retain_cataphora=1 \
+	Write::Treex path=data/${LANGUAGE}/analysed/errs \
 	Eval::Coref just_counts=1 type=text anaphor_type=pron selector=ref > data/cs/results.${DATA_SET}
 	./eval.pl < data/cs/results.${DATA_SET}
