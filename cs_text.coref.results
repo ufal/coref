@@ -97,3 +97,22 @@ RuleBased Treex (DEV): P: 36.55% (261 / 714)    R: 35.80% (261 / 729)   F: 36.17
 - rule-based = the closest which agree in gender and number
 RuleBased Treex (DEV_GOLD): P: 75.80% (1485 / 1959) R: 76.39% (1485 / 1944) F: 76.10%
 RuleBased Treex (DEV): P: 45.07% (749 / 1662)   R: 37.66% (749 / 1989)  F: 41.03%
+
+- STATISTICS (TRAIN)
+    - all anaphoric nodes (according to the filter), which are coreferential
+        - gram/number comparison
+                            nr   pl   sg
+                  nr    0    0   15   43
+                  pl   17    0 3701  115
+                  sg    1   29  100 8381
+        
+        - gram/gender comparison
+                            anim  fem inan neut   nr
+                  anim    5 3623    1    0   13 2464
+                  fem     5  882 1741    1   13  537
+                  inan    5  706    2    3   17 1085
+                  neut    2  312   20    0  152  335
+                  nr      1  411    4    0    5   57
+        
+        - correctly assigned gram/gender:    44.96%
+
