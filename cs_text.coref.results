@@ -49,3 +49,47 @@ Treex (DEV + TRAIN_ANALYSED): P: 54.65% (388 / 710) R: 19.96% (388 / 1944)  F: 2
 no AddPersPron
 Treex (SAMPLE + TRAIN_ANALYSED): P: 64.58% (31 / 48)    R: 29.25% (31 / 106)    F: 40.26%
 Treex (DEV + TRAIN_ANALYSED): P: 52.73% (376 / 713) R: 19.34% (376 / 1944)  F: 28.30%
+
+==================================================================================================================
+8.11.2011
+- some of bugs which I left just to accord with Linh's (2009) version fixed
+
+Treex (DEV + TRAIN_ANALYSED): P: 55.48% (395 / 712)   R: 20.32% (395 / 1944)  F: 29.74%
+
+- join_feats and agree_feats definition changed
+    - join_feats - if one of the arguments is undef, return undef
+    - agree_feats - if one of the arguments is undef, return false
+
+Treex (DEV + TRAIN_ANALYSED): P: 60.98% (25 / 41)    R: 1.29% (25 / 1944)    F: 2.52%
+    
+    - join_feats - if one of the arguments is undef, return undef
+
+Treex (DEV + TRAIN_ANALYSED): P: 65.96% (62 / 94) R: 3.19% (62 / 1944)    F: 6.08%
+
+- bug in wrong coordinations removed, better result expected though
+
+Treex (DEV + TRAIN_ANALYSED): P: 55.90% (398 / 712) R: 20.47% (398 / 1944)  F: 29.97%
+
+==================================================================================================================
+9.11.2011
+- alignment of t-generated nodes added
+
+Treex (DEV + TRAIN_ANALYSED): P: 53.53% (409 / 764) R: 21.04% (409 / 1944)  F: 30.21%
+Treex (SAMPLE + TRAIN_ANALYSED): P: 68.75% (33 / 48)    R: 31.13% (33 / 106)    F: 42.86%
+
+- AddPersPron "repaired"
+    - bug with feminime gender fixed
+    - new (probably bad) distinction - nr gender - introduced
+
+Treex (DEV + TRAIN_ANALYSED): P: 53.16% (379 / 713)   R: 19.50% (379 / 1944)  F: 28.53%
+
+anaphor_as_candidate = 0
+Treex (DEV + TRAIN_ANALYSED): P: 40.96% (625 / 1526)  R: 32.15% (625 / 1944)  F: 36.02%
+
+RuleBased Treex (DEV_GOLD): P: 70.09% (1373 / 1959) R: 70.63% (1373 / 1944) F: 70.36%
+RuleBased Treex (DEV): P: 40.63% (620 / 1526)  R: 31.89% (620 / 1944)  F: 35.73%
+
+- without generated nodes
+
+RuleBased Treex (DEV_GOLD): P: 69.54% (509 / 732)   R: 69.82% (509 / 729)   F: 69.68%
+RuleBased Treex (DEV): P: 36.55% (261 / 714)    R: 35.80% (261 / 729)   F: 36.17%

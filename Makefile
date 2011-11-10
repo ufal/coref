@@ -6,12 +6,18 @@ ANOT = analysed
 LANGUAGE=cs
 LANGUAGE_UPPER=`echo ${LANGUAGE} | tr 'a-z' 'A-Z'`
 
+JOBS_NUM = 50
+
+ifeq (${DATA_SET}, train)
+JOBS_NUM = 400
+endif
+
 ifeq (${LANGUAGE}, en)
 PREPROC_BLOCKS = W2A::EN::SetAfunAuxCPCoord W2A::EN::SetAfun A2T::EN::SetGrammatemes
 endif
 
 ifneq (${DATA_SET}, sample)
-CLUSTER_FLAGS = -p --qsub '-hard -l mem_free=6G -l act_mem_free=6G' --jobs 50
+CLUSTER_FLAGS = -p --qsub '-hard -l mem_free=6G -l act_mem_free=6G' --jobs ${JOBS_NUM}
 endif
 
 sort_coref_chains:
@@ -138,6 +144,7 @@ data/${LANGUAGE}/${DATA_SET}.analysed.list : data/${LANGUAGE}/${DATA_SET}.data.l
 	Util::SetGlobal language=${LANGUAGE} selector=ref \
 	Align::A::MonolingualGreedy to_language=${LANGUAGE} to_selector=src \
 	Align::T::CopyAlignmentFromAlayer to_language=${LANGUAGE} to_selector=src \
+	Align::T::AlignGeneratedNodes to_language=${LANGUAGE} to_selector=src \
 	Write::Treex path=data/${LANGUAGE}/analysed/${DATA_SET}
 	ls data/${LANGUAGE}/analysed/${DATA_SET}/*.treex.gz > data/${LANGUAGE}/${DATA_SET}.analysed.list
 
