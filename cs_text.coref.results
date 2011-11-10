@@ -86,10 +86,14 @@ Treex (DEV + TRAIN_ANALYSED): P: 53.16% (379 / 713)   R: 19.50% (379 / 1944)  F:
 anaphor_as_candidate = 0
 Treex (DEV + TRAIN_ANALYSED): P: 40.96% (625 / 1526)  R: 32.15% (625 / 1944)  F: 36.02%
 
+- rule-based - according to Linh, Zabokrtsky (2007)
 RuleBased Treex (DEV_GOLD): P: 70.09% (1373 / 1959) R: 70.63% (1373 / 1944) F: 70.36%
 RuleBased Treex (DEV): P: 40.63% (620 / 1526)  R: 31.89% (620 / 1944)  F: 35.73%
 
 - without generated nodes
-
 RuleBased Treex (DEV_GOLD): P: 69.54% (509 / 732)   R: 69.82% (509 / 729)   F: 69.68%
 RuleBased Treex (DEV): P: 36.55% (261 / 714)    R: 35.80% (261 / 729)   F: 36.17%
+
+- rule-based = the closest which agree in gender and number
+RuleBased Treex (DEV_GOLD): P: 75.80% (1485 / 1959) R: 76.39% (1485 / 1944) F: 76.10%
+RuleBased Treex (DEV): P: 45.07% (749 / 1662)   R: 37.66% (749 / 1989)  F: 41.03%
