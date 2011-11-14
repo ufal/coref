@@ -115,4 +115,30 @@ RuleBased Treex (DEV): P: 45.07% (749 / 1662)   R: 37.66% (749 / 1989)  F: 41.03
                   nr      1  411    4    0    5   57
         
         - correctly assigned gram/gender:    44.96%
+        - first 10 tags (account for 50% of all occurences) of nodes which govern a perspron 
+          having a 'nr' gender in the analysed data
 
+                VB-S---3P-AA---  456
+                Vf--------A----  406
+                VpYS---XR-AA---  331
+                NNFS1-----A----  207
+                NNIS1-----A----  172
+                VB-P---3P-AA---  153
+                VpMP---XR-AA---  140
+                NNFS4-----A----  137
+                NNFS2-----A----  117
+                NNIS4-----A----  111
+
+======================================================================================
+14.11.2011
+
+- test on system data with gold genders
+
+Treex (DEV + TRAIN_ANALYSED): P: 61.97% (945 / 1525)    R: 48.61% (945 / 1944)  F: 54.48%
+
+- test on system data with gold genders, numbers and persons
+
+Treex (DEV + TRAIN_ANALYSED): P: 63.33% (969 / 1530)  R: 49.85% (969 / 1944)  F: 55.79%
+
+- the same, but anaphor_as_candidate = 1
+Treex (DEV + TRAIN_ANALYSED): P: 65.12% (967 / 1485)  R: 49.74% (967 / 1944)  F: 56.40%
