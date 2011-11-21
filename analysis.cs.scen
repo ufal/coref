@@ -3,6 +3,7 @@
 # to m-layer
 W2A::CS::Tokenize
 W2A::CS::TagMorce
+W2A::CS::FixMorphoErrors
 
 # to a-layer
 #W2A::CS::ParseMST #TODO (David): select the best parser (implementation): this new one or the adapted old one?

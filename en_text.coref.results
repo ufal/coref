@@ -1,2 +1,9 @@
-Treex(DEV): P: 41.17% (807 / 1960)  R: 56.63% (807 / 1425)  F: 47.68%
+Treex(DEV_GOLD + TRAIN_GOLD): P: 41.17% (807 / 1960)  R: 56.63% (807 / 1425)  F: 47.68%
     - first experiment with English CR
+
+21.11.2011
+- experiments on the generated data
+Treex(DEV + TRAIN_ANALYSED): P: 34.25% (669 / 1953)  R: 46.95% (669 / 1425)  F: 39.61%
+
+- using the original A2T::EN::FindTextCoref block
+Treex(DEV + TRAIN_ANALYSED): P: 33.18% (217 / 654)   R: 15.23% (217 / 1425)  F: 20.88%

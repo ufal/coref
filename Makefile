@@ -9,7 +9,7 @@ LANGUAGE_UPPER=`echo ${LANGUAGE} | tr 'a-z' 'A-Z'`
 JOBS_NUM = 50
 
 ifeq (${DATA_SET}, train)
-JOBS_NUM = 400
+JOBS_NUM = 200
 endif
 
 ifeq (${LANGUAGE}, en)
@@ -34,15 +34,16 @@ suggest_breaks:
 	Write::Treex to=with_breaks.treex
 
 eval_gram: 
-	treex -Lcs -Ssrc \
-	Read::PDT from=@data/sample.data.list schema_dir=/net/work/people/mnovak/schemas \
+	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
+	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.data.list schema_dir=/net/work/people/mnovak/schemas \
 	T2T::CopyTtree source_selector=src selector=ref \
 	A2T::StripCoref type=gram selector=src \
-	A2T::CS::SetFormeme \
-	A2T::CS::MarkClauseHeads \
-	A2T::CS::MarkReflpronCoref \
-	A2T::CS::MarkRelClauseCoref \
-	Eval::Coref type=gram selector=ref
+	A2T::${LANGUAGE_UPPER}::SetFormeme \
+	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
+	A2T::${LANGUAGE_UPPER}::MarkReflpronCoref \
+	A2T::${LANGUAGE_UPPER}::MarkRelClauseCoref \
+	Eval::Coref just_counts=1 type=gram anaphor_type=rel selector=ref > data/${LANGUAGE}/results.rel.${DATA_SET}
+	./eval.pl < data/${LANGUAGE}/results.rel.${DATA_SET}
 
 #treex -p --jobs 50 -Lcs -Ssrc 
 	#A2T::EN::FindTextCoref 
@@ -82,8 +83,10 @@ data/${LANGUAGE}/train.gold : data/${LANGUAGE}/train.data.list
 
 print_system_coref_data: data/${LANGUAGE}/train.analysed
 
+#Util::Eval tnode=`cat copy_grams` selector=ref  
+
 data/${LANGUAGE}/train.analysed : data/${LANGUAGE}/train.analysed.list
-	treex -p --jobs 50 -L${LANGUAGE} \
+	treex ${CLUSTER_FLAGS} -L${LANGUAGE} \
 	Read::Treex from=@data/${LANGUAGE}/train.analysed.list \
 	T2T::CopyCorefFromAlignment type=text selector=ref \
 	Print::${LANGUAGE_UPPER}::TextPronCorefData selector=src > data/${LANGUAGE}/train.analysed
@@ -148,11 +151,53 @@ data/${LANGUAGE}/${DATA_SET}.analysed.list : data/${LANGUAGE}/${DATA_SET}.data.l
 	Write::Treex path=data/${LANGUAGE}/analysed/${DATA_SET}
 	ls data/${LANGUAGE}/analysed/${DATA_SET}/*.treex.gz > data/${LANGUAGE}/${DATA_SET}.analysed.list
 
-eval_text_gener : data/cs/${DATA_SET}.analysed.list
-	treex ${CLUSTER_FLAGS} -Lcs -Ssrc \
-	Read::Treex from=@data/cs/${DATA_SET}.analysed.list \
-	A2T::CS::MarkTextPronCoref model_path=data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT} \
+	#Util::Eval tnode=`cat copy_grams` selector=ref
+
+eval_text_gener : data/${LANGUAGE}/${DATA_SET}.analysed.list
+	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
+	Read::Treex from=@data/${LANGUAGE}/${DATA_SET}.analysed.list \
+	A2T::${LANGUAGE_UPPER}::MarkTextPronCoref model_path=data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT} \
 	A2T::RearrangeCorefLinks retain_cataphora=1 \
 	Write::Treex path=data/${LANGUAGE}/analysed/errs \
-	Eval::Coref just_counts=1 type=text anaphor_type=pron selector=ref > data/cs/results.${DATA_SET}
-	./eval.pl < data/cs/results.${DATA_SET}
+	Eval::Coref just_counts=1 type=text anaphor_type=pron selector=ref > data/${LANGUAGE}/results.${DATA_SET}
+	./eval.pl < data/${LANGUAGE}/results.${DATA_SET}
+
+print_segm_breaks_train : data/${LANGUAGE}/train.segments.gold
+
+data/${LANGUAGE}/train.segments.gold : data/${LANGUAGE}/${DATA_SET}.bridging.list
+	treex ${CLUSTER_FLAGS} -Lcs -Ssrc \
+	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.bridging.list schema_dir=/net/work/people/mnovak/schemas \
+	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
+	T2T::SetClauseNumber \
+	Segment::SetInterlinkCounts \
+	Print::CorefSegmentsData > data/${LANGUAGE}/train.segments.gold
+
+data/${LANGUAGE}/bridging.${DATA_SET}.model : data/${LANGUAGE}/train.segments.gold
+	echo class,`perl -MTreex::Tool::Coreference::CS::CorefSegmentsFeatures -e 'my $$a = Treex::Tool::Coreference::CS::CorefSegmentsFeatures->new(); print join ",", @{$$a->feature_names};'` > feat_names.tmp
+	./maxentropy.train.pl -n `cat feat_names.tmp` data/${LANGUAGE}/bridging.${DATA_SET}.model < data/${LANGUAGE}/train.segments.gold
+	rm feat_names.tmp
+
+update_segm_model : data/${LANGUAGE}/bridging.${DATA_SET}.model
+	#-mkdir -p /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/
+	#cp data/${LANGUAGE}/model.train.${ANOT} /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT}
+	-mkdir -p ${TMT_ROOT}/share/data/models/coreference/
+	cp data/${LANGUAGE}/bridging.${DATA_SET}.model ${TMT_ROOT}/share/data/models/coreference/segments.maxent.gold
+
+#Segment::EstimateInterlinkCounts # guess interlink counts, stored in 'estim_interlinks'
+#Segment::SetInterlinkCounts \			# set true interlink counts, stored in 'true_interlinks'
+#Segment::SuggestSegmentBreaks dry_run=1					# suggest breaks based on 'estim_interlinks', stored in 'estim_segm_break'
+#Segment::SuggestSegmentBreaks dry_run=1 true_values=1	# suggest breaks based on 'true_interlinks', stored in 'true_segm_break'
+
+
+eval_segm : data/${LANGUAGE}/bridging.train.model data/${LANGUAGE}/${DATA_SET}.bridging.list
+	treex ${CLUSTER_FLAGS} -Lcs -Ssrc \
+	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.bridging.list schema_dir=/net/work/people/mnovak/schemas \
+	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
+	T2T::SetClauseNumber \
+	Segment::SetBlockIdsAtRandom \
+	Segment::EstimateInterlinkCounts \
+	Segment::SetInterlinkCounts \
+	Segment::SuggestSegmentBreaks dry_run=1 \
+	Segment::SuggestSegmentBreaks dry_run=1 true_values=1 \
+	Eval::CorefSegm > data/cs/results.segm.${DATA_SET}
+	./eval.pl -r < data/cs/results.segm.${DATA_SET}
