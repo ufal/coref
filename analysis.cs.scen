@@ -42,11 +42,11 @@ A2T::CS::FixTlemmas
 
 # Nove od O. Duska
 A2T::CS::FixNumerals # přehození číslovek pod závislé ( pět <- knedlíků )
-A2T::CS::SetNodetype use_functors=0 # nahodí nodetype (oddělení 'coap' )
+A2T::SetNodetype # nahodí nodetype (oddělení 'coap' )
 A2T::CS::SetFormeme use_version=2 # použití nových formémů
 A2T::CS::SetDiathesis # diateze
-A2T::CS::SetFunctors # až teď můžou být volány funktory
-A2T::CS::SetNodetype # teď se podle funktorů nodetype zpřesní
+A2T::CS::SetFunctors memory=2g # až teď můžou být volány funktory
+A2T::SetNodetype # teď se podle funktorů nodetype zpřesní
 A2T::FixAtomicNodes
 A2T::CS::SetGrammatemes
 A2T::CS::AddPersPron 
