@@ -17,7 +17,7 @@ PREPROC_BLOCKS = W2A::EN::SetAfunAuxCPCoord W2A::EN::SetAfun A2T::EN::SetGrammat
 endif
 
 ifneq (${DATA_SET}, sample)
-CLUSTER_FLAGS = -p --qsub '-hard -l mem_free=6G -l act_mem_free=6G' --jobs ${JOBS_NUM}
+CLUSTER_FLAGS = -p --qsub '-hard -l mem_free=6G -l act_mem_free=6G -l h_vmem=6G' --jobs ${JOBS_NUM}
 endif
 
 sort_coref_chains:
@@ -188,16 +188,19 @@ update_segm_model : data/${LANGUAGE}/bridging.${DATA_SET}.model
 #Segment::SuggestSegmentBreaks dry_run=1					# suggest breaks based on 'estim_interlinks', stored in 'estim_segm_break'
 #Segment::SuggestSegmentBreaks dry_run=1 true_values=1	# suggest breaks based on 'true_interlinks', stored in 'true_segm_break'
 
+	#Segment::SetBlockIdsAtRandom 
 
 eval_segm : data/${LANGUAGE}/bridging.train.model data/${LANGUAGE}/${DATA_SET}.bridging.list
 	treex ${CLUSTER_FLAGS} -Lcs -Ssrc \
 	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.bridging.list schema_dir=/net/work/people/mnovak/schemas \
+	T2T::CopyTtree source_selector=src selector=ref \
+	Util::SetGlobal language=${LANGUAGE} selector=src \
 	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
 	T2T::SetClauseNumber \
-	Segment::SetBlockIdsAtRandom \
-	Segment::EstimateInterlinkCounts \
-	Segment::SetInterlinkCounts \
-	Segment::SuggestSegmentBreaks dry_run=1 \
-	Segment::SuggestSegmentBreaks dry_run=1 true_values=1 \
+	Segment::EstimateInterlinkCounts selector=src \
+	Write::Treex to=two-trees.treex.gz \
+	Segment::SetInterlinkCounts selector=ref language=${LANGUAGE} \
+	Segment::NaiveSuggestBreaks selector=src dry_run=1 \
+	Segment::GreedyRegSuggestBreaks selector=ref dry_run=1 \
 	Eval::CorefSegm > data/cs/results.segm.${DATA_SET}
 	./eval.pl -r < data/cs/results.segm.${DATA_SET}
