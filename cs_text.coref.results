@@ -142,3 +142,14 @@ Treex (DEV + TRAIN_ANALYSED): P: 63.33% (969 / 1530)  R: 49.85% (969 / 1944)  F:
 
 - the same, but anaphor_as_candidate = 1
 Treex (DEV + TRAIN_ANALYSED): P: 65.12% (967 / 1485)  R: 49.74% (967 / 1944)  F: 56.40%
+
+=====================================================================================
+21.11.2011
+
+- new reuslts with everything generated
+- I don't understand what's goin on
+- anaphor_as_candidate=1
+Treex (DEV + TRAIN_ANALYSED): P: 54.48% (845 / 1551)  R: 43.47% (845 / 1944)  F: 48.35%
+
+- anaphor_as_candidate=0
+Treex (DEV + TRAIN_ANALYSED): P: 53.30% (839 / 1574)  R: 43.16% (839 / 1944)  F: 47.70%

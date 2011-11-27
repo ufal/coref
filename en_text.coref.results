@@ -7,3 +7,10 @@ Treex(DEV + TRAIN_ANALYSED): P: 34.25% (669 / 1953)  R: 46.95% (669 / 1425)  F: 
 
 - using the original A2T::EN::FindTextCoref block
 Treex(DEV + TRAIN_ANALYSED): P: 33.18% (217 / 654)   R: 15.23% (217 / 1425)  F: 20.88%
+
+21.11.2011
+- trained from bigger data
+Treex(DEV + TRAIN_ANALYSED): P: 36.47% (713 / 1955)  R: 50.04% (713 / 1425)  F: 42.19%
+
+- not anaphor_as_candidate
+Treex(DEV + TRAIN_ANALYSED): P: 36.10% (710 / 1967)  R: 49.82% (710 / 1425)  F: 41.86%
