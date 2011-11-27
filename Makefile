@@ -174,14 +174,14 @@ data/${LANGUAGE}/train.segments.gold : data/${LANGUAGE}/${DATA_SET}.bridging.lis
 
 data/${LANGUAGE}/bridging.${DATA_SET}.model : data/${LANGUAGE}/train.segments.gold
 	echo class,`perl -MTreex::Tool::Coreference::CS::CorefSegmentsFeatures -e 'my $$a = Treex::Tool::Coreference::CS::CorefSegmentsFeatures->new(); print join ",", @{$$a->feature_names};'` > feat_names.tmp
-	./maxentropy.train.pl -n `cat feat_names.tmp` data/${LANGUAGE}/bridging.${DATA_SET}.model < data/${LANGUAGE}/train.segments.gold
+	./linregres.train.pl -n `cat feat_names.tmp` data/${LANGUAGE}/bridging.${DATA_SET}.model < data/${LANGUAGE}/train.segments.gold
 	rm feat_names.tmp
 
 update_segm_model : data/${LANGUAGE}/bridging.${DATA_SET}.model
-	#-mkdir -p /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/
-	#cp data/${LANGUAGE}/model.train.${ANOT} /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT}
+	#-mkdir -p /net/projects/tectomt_shared/data/models/coreference/
+	#cp data/${LANGUAGE}/bridging.${DATA_SET}.model /net/projects/tectomt_shared/data/models/coreference/segments.lr.gold
 	-mkdir -p ${TMT_ROOT}/share/data/models/coreference/
-	cp data/${LANGUAGE}/bridging.${DATA_SET}.model ${TMT_ROOT}/share/data/models/coreference/segments.maxent.gold
+	cp data/${LANGUAGE}/bridging.${DATA_SET}.model ${TMT_ROOT}/share/data/models/coreference/segments.lr.gold
 
 #Segment::EstimateInterlinkCounts # guess interlink counts, stored in 'estim_interlinks'
 #Segment::SetInterlinkCounts \			# set true interlink counts, stored in 'true_interlinks'
@@ -189,6 +189,7 @@ update_segm_model : data/${LANGUAGE}/bridging.${DATA_SET}.model
 #Segment::SuggestSegmentBreaks dry_run=1 true_values=1	# suggest breaks based on 'true_interlinks', stored in 'true_segm_break'
 
 	#Segment::SetBlockIdsAtRandom 
+	#Write::Treex to=doc-to-segment.treex.gz \
 
 eval_segm : data/${LANGUAGE}/bridging.train.model data/${LANGUAGE}/${DATA_SET}.bridging.list
 	treex ${CLUSTER_FLAGS} -Lcs -Ssrc \
@@ -198,9 +199,17 @@ eval_segm : data/${LANGUAGE}/bridging.train.model data/${LANGUAGE}/${DATA_SET}.b
 	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
 	T2T::SetClauseNumber \
 	Segment::EstimateInterlinkCounts selector=src \
-	Write::Treex to=two-trees.treex.gz \
 	Segment::SetInterlinkCounts selector=ref language=${LANGUAGE} \
-	Segment::NaiveSuggestBreaks selector=src dry_run=1 \
+	Segment::GreedyRegSuggestBreaks selector=src dry_run=1 \
 	Segment::GreedyRegSuggestBreaks selector=ref dry_run=1 \
 	Eval::CorefSegm > data/cs/results.segm.${DATA_SET}
 	./eval.pl -r < data/cs/results.segm.${DATA_SET}
+
+eval_interlinks : data/${LANGUAGE}/bridging.train.model data/${LANGUAGE}/${DATA_SET}.bridging.list
+	treex ${CLUSTER_FLAGS} -Lcs -Ssrc \
+	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.bridging.list schema_dir=/net/work/people/mnovak/schemas \
+	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
+	T2T::SetClauseNumber \
+	Segment::EstimateInterlinkCounts \
+	Segment::SetInterlinkCounts \
+	Util::Eval document='my @squares = map {($$_->wild->{"estim_interlinks/${LANGUAGE}_src"} - $$_->wild->{"true_interlinks/${LANGUAGE}_src"}) ** 2} $$document->get_bundles; my $$sum = 0; $$sum += $$_ foreach (@squares); print "$$sum\n";' > data/${LANGUAGE}/results.interlinks.${DATA_SET}
