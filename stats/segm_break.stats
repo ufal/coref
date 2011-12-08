@@ -1,0 +1,42 @@
+estim_interlinks     true_interlinks     missing_sents_before
+===============================================================================================================
+0                    0                   -1                    SRC: 1164, REF_NAIVE: 1165, REF_RANDOMIZED: 1164 
+0                    0                   1                     SRC: 1170, REF_NAIVE: 1165, REF_RANDOMIZED: 1170 
+0                    -1                  0                     SRC: 1182, REF_NAIVE: 1165, REF_RANDOMIZED: 1545
+0                    1                   0                     SRC: 1170, REF_NAIVE: 1165, REF_RANDOMIZED: 832
+-1                   0                   0                     SRC: 1186, REF_NAIVE: 1165, REF_RANDOMIZED: 1165
+1                    0                   0                     SRC: 1178, REF_NAIVE: 1165, REF_RANDOMIZED: 1165
+---------------------------------------------------------------------------------------------------------------
+1                    1                   0                     SRC: 1171, REF_NAIVE: 1165, REF_RANDOMIZED: 832
+0                    1                   1                     SRC: 1173, REF_NAIVE: 1165, REF_RANDOMIZED: 837
+1                    0                   1                     SRC: 1131, REF_NAIVE: 1165, REF_RANDOMIZED: 1170
+1                    0                   -1                    SRC: 1183, REF_NAIVE: 1165, REF_RANDOMIZED: 1164
+1                    1                   1                     SRC: 1134, REF_NAIVE: 1165, REF_RANDOMIZED: 837 
+1                    2                   1                     SRC: 1125, REF_NAIVE: 1165, REF_RANDOMIZED: 833 
+2                    3                   1                     SRC: 1143, REF_NAIVE: 1165, REF_RANDOMIZED: 832
+4                    3                   1                     SRC: 1148, REF_NAIVE: 1165, REF_RANDOMIZED: 832
+3                    4                   1                     SRC: 1149, REF_NAIVE: 1165, REF_RANDOMIZED: 832
+---------------------------------------------------------------------------------------------------------------
+1                    3                   100                   SRC: 1133, REF_NAIVE: 1165, REF_RANDOMIZED: 848
+1                    3                   20                    SRC: 1133, REF_NAIVE: 1165, REF_RANDOMIZED: 848
+1                    3                   10                    SRC: 1133, REF_NAIVE: 1165, REF_RANDOMIZED: 848 
+1                    3                   5                     SRC: 1133, REF_NAIVE: 1165, REF_RANDOMIZED: 837 
+1                    3                   3                     SRC: 1126, REF_NAIVE: 1165, REF_RANDOMIZED: 837 
+1                    3                   2                     SRC: 1129, REF_NAIVE: 1165, REF_RANDOMIZED: 833 
+1                    3                   1                     SRC: 1125, REF_NAIVE: 1165, REF_RANDOMIZED: 832 
+1                    3                   0.5                   SRC: 1143, REF_NAIVE: 1165, REF_RANDOMIZED: 832 
+1                    3                   0                     SRC: 1162, REF_NAIVE: 1165, REF_RANDOMIZED: 832 
+1                    3                   -1                    SRC: 1167, REF_NAIVE: 1165, REF_RANDOMIZED: 832
+1                    3                   -2                    SRC: 1171, REF_NAIVE: 1165, REF_RANDOMIZED: 835
+1                    3                   -5                    SRC: 1171, REF_NAIVE: 1165, REF_RANDOMIZED: 851
+1                    3                   -10                   SRC: 1171, REF_NAIVE: 1165, REF_RANDOMIZED: 894
+1                    3                   -20                   SRC: 1171, REF_NAIVE: 1165, REF_RANDOMIZED: 928
+1                    3                   -100                  SRC: 1171, REF_NAIVE: 1165, REF_RANDOMIZED: 928
+1                    -5                  1                     SRC: 1177, REF_NAIVE: 1165, REF_RANDOMIZED: 1545 
+1                    0                   1                     SRC: 1131, REF_NAIVE: 1165, REF_RANDOMIZED: 1170 
+1                    5                   1                     SRC: 1125, REF_NAIVE: 1165, REF_RANDOMIZED: 832 
+1                    10                  1                     SRC: 1125, REF_NAIVE: 1165, REF_RANDOMIZED: 832
+
+no CzEng simulation
+1                    3                   1                     SRC: 1739, REF_NAIVE: 1751, REF_RANDOMIZED: 1324
+3                    4                   1                     SRC: 1746, REF_NAIVE: 1751, REF_RANDOMIZED: 1324

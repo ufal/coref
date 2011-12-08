@@ -5,8 +5,22 @@ use strict;
 
 use Getopt::Long;
 
-my $ratio = 0;
-GetOptions( "ratio|r"   => \$ratio );
+my $segm = 0;
+GetOptions( "segm|s"   => \$segm );
+
+sub _add_to_array {
+    my ($array, $line) = @_;
+
+    my @vals = split /\t/, $line;
+    
+    if (!$array) {
+        return \@vals;
+    }
+    for (my $i = 0; $i < @$array; $i++) {
+        $array->[$i] += $vals[$i];
+    }
+    return $array;
+}
 
 sub _count_fscore {
     my ( $eq, $src, $ref ) = @_;
@@ -18,25 +32,24 @@ sub _count_fscore {
     return ( $prec, $reca, $fsco );
 }
 
+
+
 my ($tp_total, $src_total, $ref_total) = (0, 0, 0);
+
+my $array = undef;
 
 while (my $line = <STDIN>) {
     chomp $line;
 
-    my ($tp, $src, $ref) = split /\t/, $line;
-    $tp_total += $tp;
-    $src_total += $src;
-    if (defined $ref) {
-        $ref_total += $ref;
-    }
+    $array = _add_to_array($array, $line);
 }
 
-if ($ratio) {
-    printf "Ratio: %.2f%% (%d / %d)\n", $tp_total / $src_total * 100, $tp_total, $src_total;
+if ($segm) {
+    printf "SRC: %d, REF_NAIVE: %d, REF_RANDOMIZED: %d\n", $array->[0], $array->[1], $array->[2];
 }
 else {
     my ( $prec, $reca, $fsco ) =
-        _count_fscore( $tp_total, $src_total, $ref_total );
+        _count_fscore( @$array );
 
     printf "P: %.2f%% (%d / %d)\t", $prec * 100, $tp_total, $src_total;
     printf "R: %.2f%% (%d / %d)\t", $reca * 100, $tp_total, $ref_total;

@@ -19,10 +19,12 @@ if (@ARGV < 1) {
     exit;
 }
 
-my $epsilon = 0.001;
+my $epsilon = 0.00001;
 my $feat_names;
+my $regul_param = 0;
 GetOptions( "epsilon|e=f"   => \$epsilon,
             "names|n=s@"     => \$feat_names,
+            "regul|r=f"     => \$regul_param,
 );
 if (defined $feat_names) {
     $feat_names = [ split /,/, (join ',', @$feat_names) ];
@@ -34,8 +36,8 @@ my $lr = Treex::Tool::ML::LinearRegression->new({
         progress_cb => 'verbose',
         epsilon => $epsilon
     },
-    poly_degree => 1,
-    regul_param => 0.05,
+    poly_degree => 3,
+    regul_param => $regul_param,
 }); 
 
 my $i = 0;
