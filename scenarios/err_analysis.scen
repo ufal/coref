@@ -1,0 +1,55 @@
+################# Czech analysis #################################
+Util::SetGlobal language=cs
+
+# to a-layer
+#W2A::CS::ParseMST #TODO (David): select the best parser (implementation): this new one or the adapted old one?
+W2A::CS::ParseMSTAdapted
+W2A::CS::FixAtreeAfterMcD
+W2A::CS::FixIsMember
+
+# od O. Duska:
+W2A::CS::FixPrepositionalCase
+W2A::CS::FixReflexiveTantum
+W2A::CS::FixReflexivePronouns 
+
+# to t-layer
+A2T::CS::MarkEdgesToCollapse
+A2T::BuildTtree
+A2T::CS::RehangUnaryCoordConj
+A2T::SetIsMember
+A2T::CS::SetCoapFunctors
+A2T::FixIsMember
+A2T::MarkParentheses
+A2T::CS::DistribCoordAux
+A2T::CS::MarkClauseHeads
+A2T::CS::MarkRelClauseHeads
+A2T::CS::MarkRelClauseCoref
+  ## should not this be after SetFormeme???
+A2T::CS::FixTlemmas
+
+
+#A2T::CS::SetFunctors 
+##if you have problems running the previous block,
+##you can use the following hack, to prevent undef warnings:
+##Util::Eval tnode='$tnode->set_functor("???");'
+#A2T::CS::SetNodetype
+#A2T::CS::SetGrammatemes
+#A2T::CS::SetFormeme
+
+# Nove od O. Duska
+A2T::CS::FixNumerals # přehození číslovek pod závislé ( pět <- knedlíků )
+A2T::CS::SetNodetype use_functors=0 # nahodí nodetype (oddělení 'coap' )
+A2T::CS::SetFormeme use_version=2 # použití nových formémů
+A2T::CS::SetDiathesis # diateze
+A2T::CS::SetFunctors # až teď můžou být volány funktory
+A2T::CS::SetNodetype # teď se podle funktorů nodetype zpřesní
+A2T::FixAtomicNodes
+A2T::CS::SetGrammatemes
+A2T::CS::AddPersPron 
+T2T::SetClauseNumber
+
+A2T::CS::MarkReflpronCoref
+A2T::SetDocOrds
+Write::Treex to=err.file.treex
+A2T::CS::MarkTextPronCoref
+A2T::RearrangeCorefLinks retain_cataphora=1

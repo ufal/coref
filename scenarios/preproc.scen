@@ -1,0 +1,3 @@
+A2W::Detokenize
+Util::SetGlobal language=cs selector=src
+W2W::CopySentence source_language=cs source_selector=ref

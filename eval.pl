@@ -50,6 +50,7 @@ if ($segm) {
 else {
     my ( $prec, $reca, $fsco ) =
         _count_fscore( @$array );
+    ($tp_total, $src_total, $ref_total) = @$array;
 
     printf "P: %.2f%% (%d / %d)\t", $prec * 100, $tp_total, $src_total;
     printf "R: %.2f%% (%d / %d)\t", $reca * 100, $tp_total, $ref_total;

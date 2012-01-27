@@ -4,8 +4,6 @@ DATA_ID = pdt
 ANOT = analysed
 #ANOT = gold
 #DATA_SET = dev
-REGUL = 0
-CZENG = 0
 
 LANGUAGE=cs
 LANGUAGE_UPPER=`echo ${LANGUAGE} | tr 'a-z' 'A-Z'`
@@ -89,9 +87,9 @@ print_system_coref_data: data/${LANGUAGE}/train.analysed
 
 #Util::Eval tnode=`cat copy_grams` selector=ref  
 
-data/${LANGUAGE}/train.analysed : data/${LANGUAGE}/train.analysed.list
+data/${LANGUAGE}/train.analysed : data/${LANGUAGE}/train.pdt.analysed.list
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} \
-	Read::Treex from=@data/${LANGUAGE}/train.analysed.list \
+	Read::Treex from=@data/${LANGUAGE}/train.pdt.analysed.list \
 	T2T::CopyCorefFromAlignment type=text selector=ref \
 	Print::${LANGUAGE_UPPER}::TextPronCorefData selector=src > data/${LANGUAGE}/train.analysed
 
@@ -141,10 +139,6 @@ update_model : data/${LANGUAGE}/model.train.${ANOT}
 	#A2A::CopyAtree source_language=cs source_selector=ref flatten=1 align=1 
 prepare_auto_data : data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.analysed.list
 
-ifeq (${CZENG},1)
-SIMULATE_CZENG=Segment::SetBlockIdsAtRandom selector=ref
-endif
-
 data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.analysed.list : data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.list
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Sref \
 	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.list schema_dir=/net/work/people/mnovak/schemas \
@@ -156,103 +150,22 @@ data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.analysed.list : data/${LANGUAGE}/${DATA_
 	Align::A::MonolingualGreedy to_language=${LANGUAGE} to_selector=src \
 	Align::T::CopyAlignmentFromAlayer to_language=${LANGUAGE} to_selector=src \
 	Align::T::AlignGeneratedNodes to_language=${LANGUAGE} to_selector=src \
-	${SIMULATE_CZENG} \
-	Write::Treex path=data/${LANGUAGE}/analysed/${DATA_ID}/${DATA_SET}
+	Write::Treex clobber=1 path=data/${LANGUAGE}/analysed/${DATA_ID}/${DATA_SET}
 	ls data/${LANGUAGE}/analysed/${DATA_ID}/${DATA_SET}/*.treex.gz > data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.analysed.list
+	
+data/${LANGUAGE}/${DATA_SET}.czeng.pdt_bridging.analysed.list : data/${LANGUAGE}/${DATA_SET}.pdt_bridging.analysed.list
+	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Sref \
+	Read::Treex from=@data/${LANGUAGE}/${DATA_SET}.pdt_bridging.analysed.list \
+	Segment::SetBlockIdsAtRandom \
+	Write::Treex path=data/${LANGUAGE}/analysed/pdt_bridging/${DATA_SET}.czeng
+	ls data/${LANGUAGE}/analysed/pdt_bridging/${DATA_SET}.czeng/*.treex.gz > data/${LANGUAGE}/${DATA_SET}.czeng.pdt_bridging.analysed.list
 
 	#Util::Eval tnode=`cat copy_grams` selector=ref
 
-eval_text_gener : data/${LANGUAGE}/${DATA_SET}.analysed.list
+eval_text_gener : data/${LANGUAGE}/${DATA_SET}.pdt.analysed.list
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
-	Read::Treex from=@data/${LANGUAGE}/${DATA_SET}.analysed.list \
+	Read::Treex from=@data/${LANGUAGE}/${DATA_SET}.pdt.analysed.list \
 	A2T::${LANGUAGE_UPPER}::MarkTextPronCoref model_path=data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT} \
 	A2T::RearrangeCorefLinks retain_cataphora=1 \
-	Write::Treex path=data/${LANGUAGE}/analysed/errs \
 	Eval::Coref just_counts=1 type=text anaphor_type=pron selector=ref > data/${LANGUAGE}/results.${DATA_SET}
 	./eval.pl < data/${LANGUAGE}/results.${DATA_SET}
-
-print_segm_breaks_train : data/${LANGUAGE}/train.segm.gold
-
-data/${LANGUAGE}/train.segm.gold : data/${LANGUAGE}/train.pdt_bridging.list
-	treex ${CLUSTER_FLAGS} -Lcs -Sref \
-	Read::PDT from=@data/${LANGUAGE}/train.pdt_bridging.list schema_dir=/net/work/people/mnovak/schemas \
-	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
-	T2T::SetClauseNumber \
-	Segment::SetInterlinkCounts \
-	Print::CorefSegmentsData > data/${LANGUAGE}/train.segm.gold
-
-print_system_segm_breaks_train : data/${LANGUAGE}/train.segm.analysed
-
-data/${LANGUAGE}/train.segm.analysed : data/${LANGUAGE}/train.pdt_bridging.analysed.list
-	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
-	Read::Treex from=@data/${LANGUAGE}/train.pdt_bridging.analysed.list \
-	A2T::${LANGUAGE_UPPER}::MarkTextPronCoref model_path=data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.analysed \
-	A2T::RearrangeCorefLinks retain_cataphora=1 \
-	Segment::SetInterlinkCounts selector=src \
-	Segment::SetInterlinkCounts selector=ref \
-	Print::CorefSegmentsData > data/${LANGUAGE}/train.segm.analysed
-
-data/${LANGUAGE}/model.segm.${ANOT} : data/${LANGUAGE}/train.segm.${ANOT}
-	echo class,`perl -MTreex::Tool::Coreference::CS::CorefSegmentsFeatures -e 'my $$a = Treex::Tool::Coreference::CS::CorefSegmentsFeatures->new(); print join ",", @{$$a->feature_names};'` > feat_names.tmp
-ifdef LIMIT
-	head -n ${LIMIT} data/${LANGUAGE}/train.segm.${ANOT} > data/${LANGUAGE}/train.segm.${ANOT}.size${LIMIT}
-	./linregres.train.pl -n `cat feat_names.tmp` data/${LANGUAGE}/model.segm.${ANOT} < data/${LANGUAGE}/train.segm.${ANOT}.size${LIMIT}
-else
-	./linregres.train.pl -r ${REGUL} -n `cat feat_names.tmp` data/${LANGUAGE}/model.segm.${ANOT} < data/${LANGUAGE}/train.segm.${ANOT}
-endif
-	rm feat_names.tmp
-
-update_segm_model : data/${LANGUAGE}/model.segm.${ANOT}
-	#-mkdir -p /net/projects/tectomt_shared/data/models/coreference/
-	#cp data/${LANGUAGE}/model.segm.${ANOT} /net/projects/tectomt_shared/data/models/coreference/segments.lr.${ANOT}
-	-mkdir -p ${TMT_ROOT}/share/data/models/coreference/
-	cp data/${LANGUAGE}/model.segm.${ANOT} ${TMT_ROOT}/share/data/models/coreference/segments.lr.${ANOT}
-
-#Segment::EstimateInterlinkCounts # guess interlink counts, stored in 'estim_interlinks'
-#Segment::SetInterlinkCounts \			# set true interlink counts, stored in 'true_interlinks'
-#Segment::SuggestSegmentBreaks dry_run=1					# suggest breaks based on 'estim_interlinks', stored in 'estim_segm_break'
-#Segment::SuggestSegmentBreaks dry_run=1 true_values=1	# suggest breaks based on 'true_interlinks', stored in 'true_segm_break'
-
-	#Write::Treex to=doc-to-segment.treex.gz \
-
-eval_segm : data/${LANGUAGE}/model.segm.gold data/${LANGUAGE}/${DATA_SET}.pdt_bridging.gold.list
-	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
-	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.pdt_bridging.gold.list schema_dir=/net/work/people/mnovak/schemas \
-	T2T::CopyTtree source_selector=src selector=ref \
-	Util::SetGlobal language=${LANGUAGE} selector=src \
-	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
-	T2T::SetClauseNumber \
-	Segment::EstimateInterlinkCounts selector=src \
-	Segment::SetInterlinkCounts selector=ref language=${LANGUAGE} \
-	Segment::GreedyRegSuggestBreaks selector=src dry_run=1 \
-	Segment::GreedyRegSuggestBreaks selector=ref dry_run=1 \
-	Eval::CorefSegm > data/${LANGUAGE}/results.segm.${DATA_SET}
-	./eval.pl -s < data/${LANGUAGE}/results.segm.${DATA_SET}
-
-	#Segment::GreedyRegSuggestBreaks dry_run=1
-	#Write::Treex stem_suffix=.segm_break.naive.sample \
-
-eval_system_segm : data/${LANGUAGE}/model.segm.analysed data/${LANGUAGE}/${DATA_SET}.pdt_bridging.analysed.list
-	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
-	Read::Treex from=@data/${LANGUAGE}/${DATA_SET}.pdt_bridging.analysed.list \
-	Util::SetGlobal language=${LANGUAGE} selector=src \
-	A2T::${LANGUAGE_UPPER}::MarkTextPronCoref model_path=data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.analysed \
-	A2T::RearrangeCorefLinks retain_cataphora=1 \
-	Segment::SetInterlinkCounts \
-	Segment::EstimateInterlinkCounts \
-	Segment::RandomizedSuggestBreaks max_size=15 \
-	Util::SetGlobal language=${LANGUAGE} selector=ref \
-	Segment::SetInterlinkCounts \
-	Segment::NaiveSuggestBreaks max_size=15 \
-	Segment::RandomizedSuggestBreaks max_size=15 \
-	Eval::CorefSegm > data/cs/results.segm.${DATA_SET}.analysed
-	./eval.pl -s < data/cs/results.segm.${DATA_SET}.analysed
-
-eval_interlinks : data/${LANGUAGE}/model.segm.analysed data/${LANGUAGE}/${DATA_SET}.pdt_bridging.analysed.list
-	treex ${CLUSTER_FLAGS} -Lcs -Ssrc \
-	Read::Treex from=@data/${LANGUAGE}/${DATA_SET}.pdt_bridging.analysed.list \
-	Segment::SetInterlinkCounts \
-	Segment::EstimateInterlinkCounts \
-	Util::SetGlobal language=${LANGUAGE} selector=ref \
-	Segment::SetInterlinkCounts \
-	Util::Eval document='my @squares = map {($$_->wild->{"estim_interlinks/${LANGUAGE}_src"} - $$_->wild->{"true_interlinks/${LANGUAGE}_ref"}) ** 2} $$document->get_bundles; my $$sum = 0; $$sum += $$_ foreach (@squares); my $$score = $$sum / (2* $$document->get_bundles); print "$$score\n";' > data/${LANGUAGE}/results.interlinks.${DATA_SET}
