@@ -153,13 +153,6 @@ data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.analysed.list : data/${LANGUAGE}/${DATA_
 	Write::Treex clobber=1 path=data/${LANGUAGE}/analysed/${DATA_ID}/${DATA_SET}
 	ls data/${LANGUAGE}/analysed/${DATA_ID}/${DATA_SET}/*.treex.gz > data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.analysed.list
 	
-data/${LANGUAGE}/${DATA_SET}.czeng.pdt_bridging.analysed.list : data/${LANGUAGE}/${DATA_SET}.pdt_bridging.analysed.list
-	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Sref \
-	Read::Treex from=@data/${LANGUAGE}/${DATA_SET}.pdt_bridging.analysed.list \
-	Segment::SetBlockIdsAtRandom \
-	Write::Treex path=data/${LANGUAGE}/analysed/pdt_bridging/${DATA_SET}.czeng
-	ls data/${LANGUAGE}/analysed/pdt_bridging/${DATA_SET}.czeng/*.treex.gz > data/${LANGUAGE}/${DATA_SET}.czeng.pdt_bridging.analysed.list
-
 	#Util::Eval tnode=`cat copy_grams` selector=ref
 
 eval_text_gener : data/${LANGUAGE}/${DATA_SET}.pdt.analysed.list
