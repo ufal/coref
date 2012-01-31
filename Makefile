@@ -145,7 +145,7 @@ data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.analysed.list : data/${LANGUAGE}/${DATA_
 	A2W::Detokenize \
 	Util::SetGlobal language=${LANGUAGE} selector=src \
 	W2W::CopySentence source_language=${LANGUAGE} source_selector=ref \
-	analysis.${LANGUAGE}.scen \
+	scenarios/analysis.${LANGUAGE}.scen \
 	Util::SetGlobal language=${LANGUAGE} selector=ref \
 	Align::A::MonolingualGreedy to_language=${LANGUAGE} to_selector=src \
 	Align::T::CopyAlignmentFromAlayer to_language=${LANGUAGE} to_selector=src \

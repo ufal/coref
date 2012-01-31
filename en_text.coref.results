@@ -14,3 +14,14 @@ Treex(DEV + TRAIN_ANALYSED): P: 36.47% (713 / 1955)  R: 50.04% (713 / 1425)  F: 
 
 - not anaphor_as_candidate
 Treex(DEV + TRAIN_ANALYSED): P: 36.10% (710 / 1967)  R: 49.82% (710 / 1425)  F: 41.86%
+
+28.01.2012
+Treex(DEV + TRAIN_ANALYSED): P: 37.28% (725 / 1945) R: 50.88% (725 / 1425)  F: 43.03%
+
+31.01.2012
+- tested on formeme =~ /poss/ only
+- using the original A2T::EN::FindTextCoref block
+P: 32.57% (213 / 654)   R: 36.47% (213 / 584)   F: 34.41%
+
+- A2T::EN::MarkTextCoref block
+P: 37.79% (277 / 733)   R: 47.43% (277 / 584)   F: 42.07%
