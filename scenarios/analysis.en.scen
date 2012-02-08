@@ -8,8 +8,8 @@ W2A::EN::FixTags
 W2A::EN::Lemmatize
 
 # named entities
-#A2N::EN::StanfordNamedEntities model=ner-eng-ie.crf-3-all2008.ser.gz
-#A2N::EN::DistinguishPersonalNames
+A2N::EN::StanfordNamedEntities model=ner-eng-ie.crf-3-all2008.ser.gz
+A2N::EN::DistinguishPersonalNames
 
 # to a-layer
 W2A::MarkChunks

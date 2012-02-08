@@ -8,6 +8,11 @@ ANOT = analysed
 LANGUAGE=cs
 LANGUAGE_UPPER=`echo ${LANGUAGE} | tr 'a-z' 'A-Z'`
 
+ANAPHOR_AS_CANDIDATE = 1
+ifeq (${ANAPHOR_AS_CANDIDATE}, 1)
+JOINT_SUFFIX = .joint
+endif
+
 JOBS_NUM = 50
 
 ifeq (${DATA_SET}, train)
@@ -16,6 +21,10 @@ endif
 
 ifeq (${LANGUAGE}, en)
 PREPROC_BLOCKS = W2A::EN::SetAfunAuxCPCoord W2A::EN::SetAfun A2T::EN::SetGrammatemes
+#ifneq (${ANAPHOR_AS_CANDIDATE}, 1)
+  IS_REFER_BLOCK = A2T::EN::MarkReferentialIt selector=src
+#endif
+DELETE_TRACES = A2W::EN::DeleteTracesFromSentence
 endif
 
 ifneq (${DATA_SET}, sample)
@@ -83,15 +92,16 @@ data/${LANGUAGE}/train.gold : data/${LANGUAGE}/train.data.list
 	T2T::SetClauseNumber \
 	Print::${LANGUAGE_UPPER}::TextPronCorefData > data/${LANGUAGE}/train.gold
 
-print_system_coref_data: data/${LANGUAGE}/train.analysed
+print_system_coref_data: data/${LANGUAGE}/train.analysed${JOINT_SUFFIX}
 
 #Util::Eval tnode=`cat copy_grams` selector=ref  
 
-data/${LANGUAGE}/train.analysed : data/${LANGUAGE}/train.pdt.analysed.list
+data/${LANGUAGE}/train.analysed${JOINT_SUFFIX} : data/${LANGUAGE}/train.pdt.analysed.list
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} \
 	Read::Treex from=@data/${LANGUAGE}/train.pdt.analysed.list \
 	T2T::CopyCorefFromAlignment type=text selector=ref \
-	Print::${LANGUAGE_UPPER}::TextPronCorefData selector=src > data/${LANGUAGE}/train.analysed
+	${IS_REFER_BLOCK} \
+	Print::${LANGUAGE_UPPER}::TextPronCorefData anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} selector=src > data/${LANGUAGE}/train.analysed${JOINT_SUFFIX}
 
 data/train.data.linh : data/train.data.list
 	jtred -l data/train.data.list -jb -I linh/Print_coref_features_perc.btred > data/train.data.linh
@@ -123,14 +133,14 @@ test_linh : linh/Extract_perceptron_weights_sorted.pm
 	jtred -l data/dev.data.list -jb -I linh/Test_coref_features_perc-sorted.btred > data/results.linh.dev
 	./eval.pl < data/results.linh.dev
 
-data/${LANGUAGE}/model.train.${ANOT} : data/${LANGUAGE}/train.${ANOT}
-	${TMT_ROOT}/tools/reranker/train -loglevel:FINE -normalizer:dummy data/${LANGUAGE}/train.${ANOT} | zcat > data/${LANGUAGE}/model.train.${ANOT}
+data/${LANGUAGE}/model.train.${ANOT}${JOINT_SUFFIX} : data/${LANGUAGE}/train.${ANOT}${JOINT_SUFFIX}
+	${TMT_ROOT}/tools/reranker/train -loglevel:FINE -normalizer:dummy data/${LANGUAGE}/train.${ANOT}${JOINT_SUFFIX} | zcat > data/${LANGUAGE}/model.train.${ANOT}${JOINT_SUFFIX}
 
-update_model : data/${LANGUAGE}/model.train.${ANOT}
+update_model : data/${LANGUAGE}/model.train.${ANOT}${JOINT_SUFFIX}
 	#-mkdir -p /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/
-	#cp data/${LANGUAGE}/model.train.${ANOT} /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT}
+	#cp data/${LANGUAGE}/model.train.${ANOT}${JOINT_SUFFIX} /net/projects/tectomt_shared/data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT}${JOINT_SUFFIX}
 	-mkdir -p ${TMT_ROOT}/share/data/models/coreference/${LANGUAGE_UPPER}/perceptron/
-	cp data/${LANGUAGE}/model.train.${ANOT} ${TMT_ROOT}/share/data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT}
+	cp data/${LANGUAGE}/model.train.${ANOT}${JOINT_SUFFIX} ${TMT_ROOT}/share/data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT}${JOINT_SUFFIX}
 
 #update_model : data/cs/model.train.analysed
 #	cp data/cs/model.train /net/projects/tectomt_shared/data/models/coreference/CS/perceptron/text.perspron.gold
@@ -143,6 +153,7 @@ data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.analysed.list : data/${LANGUAGE}/${DATA_
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Sref \
 	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.list schema_dir=/net/work/people/mnovak/schemas \
 	A2W::Detokenize \
+	${DELETE_TRACES} \
 	Util::SetGlobal language=${LANGUAGE} selector=src \
 	W2W::CopySentence source_language=${LANGUAGE} source_selector=ref \
 	scenarios/analysis.${LANGUAGE}.scen \
@@ -154,11 +165,14 @@ data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.analysed.list : data/${LANGUAGE}/${DATA_
 	ls data/${LANGUAGE}/analysed/${DATA_ID}/${DATA_SET}/*.treex.gz > data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.analysed.list
 	
 	#Util::Eval tnode=`cat copy_grams` selector=ref
+	#Write::Treex stem_suffix=coref \
 
 eval_text_gener : data/${LANGUAGE}/${DATA_SET}.pdt.analysed.list
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
 	Read::Treex from=@data/${LANGUAGE}/${DATA_SET}.pdt.analysed.list \
-	A2T::${LANGUAGE_UPPER}::MarkTextPronCoref model_path=data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT} \
+	${IS_REFER_BLOCK} \
+	A2T::${LANGUAGE_UPPER}::MarkTextPronCoref anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} \
+		model_path=data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT}${JOINT_SUFFIX} \
 	A2T::RearrangeCorefLinks retain_cataphora=1 \
 	Eval::Coref just_counts=1 type=text anaphor_type=pron selector=ref > data/${LANGUAGE}/results.${DATA_SET}
 	./eval.pl < data/${LANGUAGE}/results.${DATA_SET}
