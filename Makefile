@@ -5,6 +5,9 @@ ANOT = analysed
 #ANOT = gold
 #DATA_SET = dev
 
+DATE := $(shell date +%Y-%m-%d_%H-%M-%S)
+TMT_VERSION := $(shell svn info | grep Revision | cut -d ' ' -f 2)
+
 LANGUAGE=cs
 LANGUAGE_UPPER=`echo ${LANGUAGE} | tr 'a-z' 'A-Z'`
 
@@ -21,9 +24,9 @@ endif
 
 ifeq (${LANGUAGE}, en)
 PREPROC_BLOCKS = W2A::EN::SetAfunAuxCPCoord W2A::EN::SetAfun A2T::EN::SetGrammatemes
-#ifneq (${ANAPHOR_AS_CANDIDATE}, 1)
+ifneq (${ANAPHOR_AS_CANDIDATE}, 1)
   IS_REFER_BLOCK = A2T::EN::MarkReferentialIt selector=src
-#endif
+endif
 DELETE_TRACES = A2W::EN::DeleteTracesFromSentence
 endif
 
@@ -175,4 +178,7 @@ eval_text_gener : data/${LANGUAGE}/${DATA_SET}.pdt.analysed.list
 		model_path=data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT}${JOINT_SUFFIX} \
 	A2T::RearrangeCorefLinks retain_cataphora=1 \
 	Eval::Coref just_counts=1 type=text anaphor_type=pron selector=ref > data/${LANGUAGE}/results.${DATA_SET}
-	./eval.pl < data/${LANGUAGE}/results.${DATA_SET}
+	perl -e 'print join("\t", "$(DATE)", "r${TMT_VERSION}", "DATA_SET=${DATA_SET}", "ANAPHOR_AS_CANDIDATE=${ANAPHOR_AS_CANDIDATE}", '\''${DESC}'\''); print "\n";' >> $(LANGUAGE)_text.coref.results
+	./eval.pl < data/${LANGUAGE}/results.${DATA_SET} | sed 's/^/\t/' >> $(LANGUAGE)_text.coref.results
+	tail $(LANGUAGE)_text.coref.results
+

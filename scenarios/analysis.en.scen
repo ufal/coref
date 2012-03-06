@@ -25,7 +25,7 @@ W2A::EN::SetAfunAuxCPCoord
 W2A::EN::SetAfun
 
 # to t-layer
-A2T::EN::MarkEdgesToCollapse
+A2T::EN::MarkEdgesToCollapse quotes=1
 A2T::EN::MarkEdgesToCollapseNeg
 A2T::BuildTtree
 A2T::SetIsMember
@@ -33,18 +33,22 @@ A2T::EN::MoveAuxFromCoordToMembers
 A2T::EN::FixTlemmas
 A2T::EN::SetCoapFunctors
 A2T::EN::FixEitherOr
+A2T::EN::FixHowPlusAdjective # fix "how much", "how often" etc.
 A2T::FixIsMember
 A2T::EN::MarkClauseHeads
 A2T::EN::MarkPassives
-A2T::EN::SetFunctors
 A2T::EN::MarkInfin
 A2T::EN::MarkRelClauseHeads
 A2T::EN::MarkRelClauseCoref
 A2T::EN::MarkDspRoot
 A2T::MarkParentheses
-A2T::SetNodetype
+A2T::DeleteChildlessPunctuation
+A2T::SetNodetype # approximate nodetype setting
+A2T::EN::SetFormeme2 # formemes using syntpos, not sempos
+A2T::EN::SetFunctors2 memory=2g # functors trained from PEDT
+A2T::EN::SetMissingFunctors # mask unrecognized functors
+A2T::SetNodetype # nodetype setting using functors
 A2T::EN::SetGrammatemes
-A2T::EN::SetFormeme
 A2T::EN::RehangSharedAttr
 A2T::EN::SetVoice
 A2T::EN::FixImperatives
