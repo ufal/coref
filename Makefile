@@ -1,7 +1,6 @@
 SHELL = bash
 
 DATA_SET = sample
-DATA_SOURCE = pdt
 #DATA_SOURCE = pdt_bridging
 ANOT = analysed
 #ANOT = gold
@@ -9,6 +8,36 @@ ANOT = analysed
 
 LANGUAGE=cs
 LANGUAGE_UPPER := $(shell echo ${LANGUAGE} | tr 'a-z' 'A-Z')
+
+############################### DATA SOURCES #################################
+
+DATA_SOURCE = pdt
+ifeq ($(LANGUAGE), en)
+DATA_SOURCE = pedt
+endif
+
+
+############################### EXPERIMENT IDS ##############################
+
+ID_ANALYSED := $(shell cat $(ANALYSED_DIR)/last_id 2> /dev/null || echo 0000)
+ID_TRAIN_TABLE := $(shell cat $(TRAIN_TABLE_DIR)/last_id 2> /dev/null || echo 0000)
+ID_RESOLVED := $(shell cat $(RESOLVED_DIR)/last_id 2> /dev/null || echo 0000)
+
+ID_ANALYSED_NEXT := $(shell expr $(ID_ANALYSED) + 1 | perl -ne 'printf "%.4d", $$_;' )
+ID_TRAIN_TABLE_NEXT := $(shell expr $(ID_TRAIN_TABLE) + 1 | perl -ne 'printf "%.4d", $$_;')
+ID_RESOLVED_NEXT := $(shell expr $(ID_RESOLVED) + 1 | perl -ne 'printf "%.4d", $$_;')
+
+print_dummy :
+	@echo $(ID_ANALYSED)
+	@echo $(ID_TRAIN_TABLE)
+	@echo $(ID_RESOLVED)
+	@echo $(ID_ANALYSED_NEXT)
+	@echo $(ID_TRAIN_TABLE_NEXT)
+	@echo $(ID_RESOLVED_NEXT)
+	@echo $(LANGUAGE)
+
+print_dummy-%:
+	@make -s print_dummy ID_ANALYSED=`echo $* | cut -d: -f1` ID_TRAIN_TABLE=`echo $* | cut -d: -f2` ID_RESOLVED=`echo $* | cut -d: -f3`
 
 ############################### DIRECTORIES #################################
 
@@ -18,19 +47,6 @@ TRAIN_TABLE_DIR = $(DATA_DIR)/train_tables/$(DATA_SOURCE)/$(DATA_SET)
 MODEL_DIR = $(DATA_DIR)/model/$(DATA_SOURCE)/$(DATA_SET)
 RESOLVED_DIR = $(DATA_DIR)/analysed/$(DATA_SOURCE)/$(DATA_SET)
 
-############################### EXPERIMENT IDS ##############################
-
-ID_ANALYSED := $(shell cat $(ANALYSED_DIR)/last_id 2> /dev/null || echo 1)
-ID_TRAIN_TABLE := $(shell cat $(TRAIN_TABLE_DIR)/last_id 2> /dev/null || echo 1)
-ID_RESOLVED := $(shell cat $(RESOLVED_DIR)/last_id 2> /dev/null || echo 1)
-
-print_dummy :
-	@echo $(ID_ANALYSED)
-	@echo $(ID_TRAIN_TABLE)
-	@echo $(ID_RESOLVED)
-
-print_dummy-%:
-	@make -s print_dummy ID_ANALYSED=`echo $* | cut -d: -f1` ID_TRAIN_TABLE=`echo $* | cut -d: -f2` ID_RESOLVED=`echo $* | cut -d: -f3`
 
 ############################################################################
 
@@ -64,6 +80,39 @@ endif
 ifneq (${DATA_SET}, sample)
 CLUSTER_FLAGS = -p --qsub '-hard -l mem_free=6G -l act_mem_free=6G -l h_vmem=6G' --jobs ${JOBS_NUM}
 endif
+
+
+
+################################ ANALYSE ####################################
+
+analyse :
+	@make -s analyse_data_set DATA_SET=train
+	@make -s analyse_data_set DATA_SET=dev
+	@make -s analyse_data_set DATA_SET=eval
+
+analyse_data_set : $(ANALYSED_DIR)/$(ID_ANALYSED_NEXT)/list
+
+$(ANALYSED_DIR)/$(ID_ANALYSED_NEXT)/list : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list
+	mkdir -p $(ANALYSED_DIR)/$(ID_ANALYSED_NEXT)
+	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Sref \
+	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list schema_dir=/net/work/people/mnovak/schemas \
+	A2W::Detokenize \
+	${DELETE_TRACES} \
+	Util::SetGlobal language=${LANGUAGE} selector=src \
+	W2W::CopySentence source_language=${LANGUAGE} source_selector=ref \
+	scenarios/analysis.${LANGUAGE}.scen \
+	Util::SetGlobal language=${LANGUAGE} selector=ref \
+	Align::A::MonolingualGreedy to_language=${LANGUAGE} to_selector=src \
+	Align::T::CopyAlignmentFromAlayer to_language=${LANGUAGE} to_selector=src \
+	Align::T::AlignGeneratedNodes to_language=${LANGUAGE} to_selector=src \
+	Write::Treex clobber=1 storable=1 path=$(ANALYSED_DIR)/$(ID_ANALYSED_NEXT)
+	find $(ANALYSED_DIR)/$(ID_ANALYSED_NEXT) -name "*.streex.gz" | sort > $(ANALYSED_DIR)/$(ID_ANALYSED_NEXT)/list
+	perl -e 'print join("\t", "$(ID_ANALYSED_NEXT)", "$(DATE)", "r$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(ANALYSED_DIR)/history
+	echo $(ID_ANALYSED_NEXT) > $(ANALYSED_DIR)/last_id
+
+###################### PREPARE TRAIN TABLE, MODEL ###########################
+################################ RESOLVE ####################################
+################################ EVALUATE ###################################
 
 sort_coref_chains:
 	treex -Lcs -Ssrc \
@@ -181,22 +230,6 @@ update_model : data/${LANGUAGE}/model.train.${ANOT}${JOINT_SUFFIX}
 #	cp data/cs/model.train ${TMT_ROOT}/share/data/models/coreference/CS/perceptron/text.perspron.gold
 
 	#A2A::CopyAtree source_language=cs source_selector=ref flatten=1 align=1 
-prepare_auto_data : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.analysed.list
-
-data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.analysed.list : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.list
-	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Sref \
-	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.list schema_dir=/net/work/people/mnovak/schemas \
-	A2W::Detokenize \
-	${DELETE_TRACES} \
-	Util::SetGlobal language=${LANGUAGE} selector=src \
-	W2W::CopySentence source_language=${LANGUAGE} source_selector=ref \
-	scenarios/analysis.${LANGUAGE}.scen \
-	Util::SetGlobal language=${LANGUAGE} selector=ref \
-	Align::A::MonolingualGreedy to_language=${LANGUAGE} to_selector=src \
-	Align::T::CopyAlignmentFromAlayer to_language=${LANGUAGE} to_selector=src \
-	Align::T::AlignGeneratedNodes to_language=${LANGUAGE} to_selector=src \
-	Write::Treex clobber=1 path=data/${LANGUAGE}/analysed/${DATA_SOURCE}/${DATA_SET}
-	ls data/${LANGUAGE}/analysed/${DATA_SOURCE}/${DATA_SET}/*.treex.gz > data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.analysed.list
 	
 	#Util::Eval tnode=`cat copy_grams` selector=ref
 	#Write::Treex stem_suffix=coref \
