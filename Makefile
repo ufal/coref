@@ -1,15 +1,46 @@
+SHELL = bash
+
 DATA_SET = sample
-DATA_ID = pdt
-#DATA_ID = pdt_bridging
+DATA_SOURCE = pdt
+#DATA_SOURCE = pdt_bridging
 ANOT = analysed
 #ANOT = gold
 #DATA_SET = dev
 
+LANGUAGE=cs
+LANGUAGE_UPPER := $(shell echo ${LANGUAGE} | tr 'a-z' 'A-Z')
+
+############################### DIRECTORIES #################################
+
+DATA_DIR = data/$(LANGUAGE)
+ANALYSED_DIR = $(DATA_DIR)/analysed/$(DATA_SOURCE)/$(DATA_SET)
+TRAIN_TABLE_DIR = $(DATA_DIR)/train_tables/$(DATA_SOURCE)/$(DATA_SET)
+MODEL_DIR = $(DATA_DIR)/model/$(DATA_SOURCE)/$(DATA_SET)
+RESOLVED_DIR = $(DATA_DIR)/analysed/$(DATA_SOURCE)/$(DATA_SET)
+
+############################### EXPERIMENT IDS ##############################
+
+ID_ANALYSED := $(shell cat $(ANALYSED_DIR)/last_id 2> /dev/null || echo 1)
+ID_TRAIN_TABLE := $(shell cat $(TRAIN_TABLE_DIR)/last_id 2> /dev/null || echo 1)
+ID_RESOLVED := $(shell cat $(RESOLVED_DIR)/last_id 2> /dev/null || echo 1)
+
+print_dummy :
+	@echo $(ID_ANALYSED)
+	@echo $(ID_TRAIN_TABLE)
+	@echo $(ID_RESOLVED)
+
+print_dummy-%:
+	@make -s print_dummy ID_ANALYSED=`echo $* | cut -d: -f1` ID_TRAIN_TABLE=`echo $* | cut -d: -f2` ID_RESOLVED=`echo $* | cut -d: -f3`
+
+############################################################################
+
+RUNS_DIR = runs
+
 DATE := $(shell date +%Y-%m-%d_%H-%M-%S)
 TMT_VERSION := $(shell svn info | grep Revision | cut -d ' ' -f 2)
+NEW_NUM  := $(shell perl -e '$$m=0; for(<$(RUNS_DIR)/*>){/\/(\d+)_/ and $$1 > $$m and $$m=$$1;} printf "%03d", $$m+1;')
+NEW_TRY  := $(RUNS_DIR)/$(NEW_NUM)_$(DATE)_$(SHORT_SCEN)
 
-LANGUAGE=cs
-LANGUAGE_UPPER=`echo ${LANGUAGE} | tr 'a-z' 'A-Z'`
 
 ANAPHOR_AS_CANDIDATE = 1
 ifeq (${ANAPHOR_AS_CANDIDATE}, 1)
@@ -150,11 +181,11 @@ update_model : data/${LANGUAGE}/model.train.${ANOT}${JOINT_SUFFIX}
 #	cp data/cs/model.train ${TMT_ROOT}/share/data/models/coreference/CS/perceptron/text.perspron.gold
 
 	#A2A::CopyAtree source_language=cs source_selector=ref flatten=1 align=1 
-prepare_auto_data : data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.analysed.list
+prepare_auto_data : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.analysed.list
 
-data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.analysed.list : data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.list
+data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.analysed.list : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.list
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Sref \
-	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.list schema_dir=/net/work/people/mnovak/schemas \
+	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.list schema_dir=/net/work/people/mnovak/schemas \
 	A2W::Detokenize \
 	${DELETE_TRACES} \
 	Util::SetGlobal language=${LANGUAGE} selector=src \
@@ -164,8 +195,8 @@ data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.analysed.list : data/${LANGUAGE}/${DATA_
 	Align::A::MonolingualGreedy to_language=${LANGUAGE} to_selector=src \
 	Align::T::CopyAlignmentFromAlayer to_language=${LANGUAGE} to_selector=src \
 	Align::T::AlignGeneratedNodes to_language=${LANGUAGE} to_selector=src \
-	Write::Treex clobber=1 path=data/${LANGUAGE}/analysed/${DATA_ID}/${DATA_SET}
-	ls data/${LANGUAGE}/analysed/${DATA_ID}/${DATA_SET}/*.treex.gz > data/${LANGUAGE}/${DATA_SET}.${DATA_ID}.analysed.list
+	Write::Treex clobber=1 path=data/${LANGUAGE}/analysed/${DATA_SOURCE}/${DATA_SET}
+	ls data/${LANGUAGE}/analysed/${DATA_SOURCE}/${DATA_SET}/*.treex.gz > data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.analysed.list
 	
 	#Util::Eval tnode=`cat copy_grams` selector=ref
 	#Write::Treex stem_suffix=coref \
