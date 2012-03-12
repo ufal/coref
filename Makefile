@@ -43,7 +43,7 @@ print_dummy-%:
 
 DATA_DIR = data/$(LANGUAGE)
 ANALYSED_DIR = $(DATA_DIR)/analysed/$(DATA_SOURCE)/$(DATA_SET)
-TRAIN_TABLE_DIR = $(DATA_DIR)/train_tables/$(DATA_SOURCE)/$(DATA_SET)
+TRAIN_TABLE_DIR = $(DATA_DIR)/train_table/$(DATA_SOURCE)/$(DATA_SET)
 MODEL_DIR = $(DATA_DIR)/model/$(DATA_SOURCE)/$(DATA_SET)
 RESOLVED_DIR = $(DATA_DIR)/analysed/$(DATA_SOURCE)/$(DATA_SET)
 
@@ -106,11 +106,28 @@ $(ANALYSED_DIR)/$(ID_ANALYSED_NEXT)/list : data/${LANGUAGE}/${DATA_SET}.${DATA_S
 	Align::T::CopyAlignmentFromAlayer to_language=${LANGUAGE} to_selector=src \
 	Align::T::AlignGeneratedNodes to_language=${LANGUAGE} to_selector=src \
 	Write::Treex clobber=1 storable=1 path=$(ANALYSED_DIR)/$(ID_ANALYSED_NEXT)
-	find $(ANALYSED_DIR)/$(ID_ANALYSED_NEXT) -name "*.streex.gz" | sort > $(ANALYSED_DIR)/$(ID_ANALYSED_NEXT)/list
+	find $(ANALYSED_DIR)/$(ID_ANALYSED_NEXT) -name "*.streex" | sort > $(ANALYSED_DIR)/$(ID_ANALYSED_NEXT)/list
 	perl -e 'print join("\t", "$(ID_ANALYSED_NEXT)", "$(DATE)", "r$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(ANALYSED_DIR)/history
 	echo $(ID_ANALYSED_NEXT) > $(ANALYSED_DIR)/last_id
 
 ###################### PREPARE TRAIN TABLE, MODEL ###########################
+
+train_table:
+	@make -s train_table_data_set DATA_SET=train
+
+train_table_data_set: $(TRAIN_TABLE_DIR)/$(ID_ANALYSED_NEXT).$(ID_TRAIN_TABLE_NEXT).table
+
+$(TRAIN_TABLE_DIR)/$(ID_ANALYSED_NEXT).$(ID_TRAIN_TABLE_NEXT).table : $(ANALYSED_DIR)/$(ID_ANALYSED_NEXT)/list
+	mkdir -p $(TRAIN_TABLE_DIR)
+	treex ${CLUSTER_FLAGS} -L${LANGUAGE} \
+	Read::Treex from=@$(ANALYSED_DIR)/$(ID_ANALYSED_NEXT)/list \
+	T2T::CopyCorefFromAlignment type=text selector=ref \
+	${IS_REFER_BLOCK} \
+	Print::${LANGUAGE_UPPER}::TextPronCorefData anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} selector=src \
+		> $(TRAIN_TABLE_DIR)/$(ID_ANALYSED_NEXT).$(ID_TRAIN_TABLE_NEXT).table
+	perl -e 'print join("\t", "$(ID_TRAIN_TABLE_NEXT)", "$(ID_ANALYSED_NEXT)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "r$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(TRAIN_TABLE_DIR)/history
+	echo $(ID_TRAIN_TABLE_NEXT) > $(TRAIN_TABLE_DIR)/last_id
+
 ################################ RESOLVE ####################################
 ################################ EVALUATE ###################################
 
@@ -175,16 +192,6 @@ data/${LANGUAGE}/train.gold : data/${LANGUAGE}/train.data.list
 	T2T::SetClauseNumber \
 	Print::${LANGUAGE_UPPER}::TextPronCorefData > data/${LANGUAGE}/train.gold
 
-print_system_coref_data: data/${LANGUAGE}/train.analysed${JOINT_SUFFIX}
-
-#Util::Eval tnode=`cat copy_grams` selector=ref  
-
-data/${LANGUAGE}/train.analysed${JOINT_SUFFIX} : data/${LANGUAGE}/train.pdt.analysed.list
-	treex ${CLUSTER_FLAGS} -L${LANGUAGE} \
-	Read::Treex from=@data/${LANGUAGE}/train.pdt.analysed.list \
-	T2T::CopyCorefFromAlignment type=text selector=ref \
-	${IS_REFER_BLOCK} \
-	Print::${LANGUAGE_UPPER}::TextPronCorefData anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} selector=src > data/${LANGUAGE}/train.analysed${JOINT_SUFFIX}
 
 data/train.data.linh : data/train.data.list
 	jtred -l data/train.data.list -jb -I linh/Print_coref_features_perc.btred > data/train.data.linh
