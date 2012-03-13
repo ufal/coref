@@ -96,11 +96,13 @@ endif
 
 ################################ ANALYSE ####################################
 
-analyse :
-	@make -s analyse_data_set DATA_SET=train ID_ANALYSED=$(ID_ANALYSED_NEXT)
-	@make -s analyse_data_set DATA_SET=dev ID_ANALYSED=$(ID_ANALYSED_NEXT)
-	@make -s analyse_data_set DATA_SET=eval ID_ANALYSED=$(ID_ANALYSED_NEXT)
-
+analyse_all :
+	@make analyse DATA_SET=train
+	@make analyse DATA_SET=dev
+	@make analyse DATA_SET=eval
+analyse:
+	@make analyse_data_set ID_ANALYSED=$(ID_ANALYSED_NEXT)
+	
 analyse_data_set : $(ANALYSED_DIR)/$(ID_ANALYSED)/list
 
 $(ANALYSED_DIR)/$(ID_ANALYSED)/list : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list
