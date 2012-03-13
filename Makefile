@@ -150,6 +150,7 @@ $(TRAIN_TABLE_GOLD_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : data/${LANGUAGE}/${DA
 	echo $(ID_TRAIN_TABLE) > $(TRAIN_TABLE_DIR)/last_id
 
 #-------------------- ANALYSED -------------------------------
+	#Util::Eval tnode=`cat scripts/copy_grams` selector=ref \
 
 $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : $(ANALYSED_DIR)/$(ID_ANALYSED)/list
 	mkdir -p $(TRAIN_TABLE_ANALYSED_DIR)
@@ -213,6 +214,7 @@ $(RESOLVED_GOLD_DIR)/$(ID_RESOLVED_COMBINED)/list : data/${LANGUAGE}/${DATA_SET}
 
 #-------------------- ANALYSED -------------------------------
 	#A2T::RearrangeCorefLinks retain_cataphora=1 \
+	#Util::Eval tnode=`cat scripts/copy_grams` selector=ref \
 
 $(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED)/list : $(ANALYSED_DIR)/$(ID_ANALYSED)/list
 	mkdir -p $(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED)
