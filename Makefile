@@ -81,11 +81,18 @@ JOBS_NUM = 200
 endif
 
 ifeq (${LANGUAGE}, en)
-PREPROC_BLOCKS = W2A::EN::SetAfunAuxCPCoord W2A::EN::SetAfun A2T::EN::SetGrammatemes
+ifeq ($(DATA_SOURCE), pedt)
+  PREPROC_BLOCKS = W2A::EN::SetAfunAuxCPCoord W2A::EN::SetAfun A2T::EN::SetGrammatemes
+  DELETE_TRACES = A2W::EN::DeleteTracesFromSentence
+endif
 ifneq (${ANAPHOR_AS_CANDIDATE}, 1)
   IS_REFER_BLOCK = A2T::EN::MarkReferentialIt
 endif
-DELETE_TRACES = A2W::EN::DeleteTracesFromSentence
+endif
+
+READ_GOLD_DATA_BLOCK = Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list schema_dir=/net/work/people/mnovak/schemas
+ifeq ($(DATA_SOURCE), pcedt)
+  READ_GOLD_DATA_BLOCK = Read::Treex from=@data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list
 endif
 
 ifneq (${DATA_SET}, sample)
@@ -107,8 +114,10 @@ analyse_data_set : $(ANALYSED_DIR)/$(ID_ANALYSED)/list
 
 $(ANALYSED_DIR)/$(ID_ANALYSED)/list : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list
 	mkdir -p $(ANALYSED_DIR)/$(ID_ANALYSED)
-	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Sref \
-	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list schema_dir=/net/work/people/mnovak/schemas \
+	treex ${CLUSTER_FLAGS} -L${LANGUAGE} \
+	$(READ_GOLD_DATA_BLOCK) \
+	Util::Eval language=${LANGUAGE} zone='$$zone->set_selector("ref");' \
+	Util::SetGlobal language=${LANGUAGE} selector=ref \
 	A2W::Detokenize \
 	${DELETE_TRACES} \
 	Util::SetGlobal language=${LANGUAGE} selector=src \
@@ -138,7 +147,7 @@ train_table_data_set: $(TRAIN_TABLE_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
 $(TRAIN_TABLE_GOLD_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list
 	mkdir -p $(TRAIN_TABLE_GOLD_DIR)
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} \
-	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list schema_dir=/net/work/people/mnovak/schemas \
+	${READ_GOLD_DATA_BLOCK} \
 	${PREPROC_BLOCKS} \
 	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
 	A2T::SetDocOrds \
@@ -196,8 +205,10 @@ resolve: $(RESOLVED_DIR)/$(ID_RESOLVED_COMBINED)/list
 
 $(RESOLVED_GOLD_DIR)/$(ID_RESOLVED_COMBINED)/list : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list
 	mkdir -p $(RESOLVED_GOLD_DIR)/$(ID_RESOLVED_COMBINED)
-	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
-	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list schema_dir=/net/work/people/mnovak/schemas \
+	treex ${CLUSTER_FLAGS} -L${LANGUAGE} \
+	${READ_GOLD_DATA_BLOCK} \
+	Util::Eval language=${LANGUAGE} zone='$$zone->set_selector("src");' \
+	Util::SetGlobal selector=src \
 	${PREPROC_BLOCKS} \
 	T2T::CopyTtree source_selector=src selector=ref \
 	A2T::StripCoref type=text selector=src \
@@ -234,7 +245,7 @@ eval : $(RESOLVED_DIR)/$(ID_RESOLVED_COMBINED)/list
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
 	Read::Treex from=@$(RESOLVED_DIR)/$(ID_RESOLVED_COMBINED)/list \
 	Eval::Coref just_counts=1 type=text anaphor_type=pron selector=ref > data/${LANGUAGE}/results.${DATA_SET}
-	perl -e 'print join("\t", "$(ANOT).$(ID_RESOLVED_COMBINED)", "$(DATE)", "r${TMT_VERSION}", "DATA_SET=${DATA_SET}", "ANAPHOR_AS_CANDIDATE=${ANAPHOR_AS_CANDIDATE}", '\''${DESC}'\''); print "\n";' >> $(LANGUAGE)_text.coref.results
+	perl -e 'print join("\t", "$(DATA_SOURCE).$(ANOT).$(ID_RESOLVED_COMBINED)", "$(DATE)", "r${TMT_VERSION}", "DATA_SET=${DATA_SET}", "ANAPHOR_AS_CANDIDATE=${ANAPHOR_AS_CANDIDATE}", '\''${DESC}'\''); print "\n";' >> $(LANGUAGE)_text.coref.results
 	./eval.pl < data/${LANGUAGE}/results.${DATA_SET} | sed 's/^/\t/' >> $(LANGUAGE)_text.coref.results
 	rm $(DATA_DIR)/results.${DATA_SET}
 	tail $(LANGUAGE)_text.coref.results
