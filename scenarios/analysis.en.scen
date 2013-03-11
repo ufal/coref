@@ -1,6 +1,6 @@
 ################# English analysis #################################
 
-W2A::ResegmentSentences
+#W2A::ResegmentSentences
 W2A::EN::Tokenize
 W2A::EN::NormalizeForms
 W2A::EN::FixTokenization

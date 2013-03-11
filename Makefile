@@ -95,7 +95,8 @@ ifeq ($(DATA_SOURCE), pcedt)
   READ_GOLD_DATA_BLOCK = Read::Treex from=@data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list
 endif
 
-ifneq (${DATA_SET}, sample)
+LRC=1
+ifeq ($(LRC), 1)
 CLUSTER_FLAGS = -p --qsub '-hard -l mem_free=6G -l act_mem_free=6G -l h_vmem=6G' --jobs ${JOBS_NUM}
 endif
 
@@ -228,6 +229,7 @@ $(RESOLVED_GOLD_DIR)/$(ID_RESOLVED_COMBINED)/list : data/${LANGUAGE}/${DATA_SET}
 	#Util::Eval tnode=`cat scripts/copy_grams` selector=ref \
 
 $(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED)/list : $(ANALYSED_DIR)/$(ID_ANALYSED)/list
+	echo $(RESOLVED_DIR)/$(ID_RESOLVED_COMBINED)/list
 	mkdir -p $(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED)
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
 	Read::Treex from=@$(ANALYSED_DIR)/$(ID_ANALYSED)/list \
