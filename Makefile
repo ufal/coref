@@ -117,7 +117,8 @@ $(ANALYSED_DIR)/$(ID_ANALYSED)/list : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE
 	mkdir -p $(ANALYSED_DIR)/$(ID_ANALYSED)
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} \
 	$(READ_GOLD_DATA_BLOCK) \
-	Util::Eval language=${LANGUAGE} zone='$$zone->set_selector("ref");' \
+	Util::Eval language=cs zone='$$zone->set_selector("ref");' \
+	Util::Eval language=en zone='$$zone->set_selector("ref");' \
 	Util::SetGlobal language=${LANGUAGE} selector=ref \
 	A2W::Detokenize \
 	${DELETE_TRACES} \
