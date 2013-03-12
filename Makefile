@@ -129,7 +129,7 @@ $(ANALYSED_DIR)/$(ID_ANALYSED)/list : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE
 	Align::T::CopyAlignmentFromAlayer to_language=${LANGUAGE} to_selector=src \
 	Align::T::AlignGeneratedNodes to_language=${LANGUAGE} to_selector=src \
 	Write::Treex clobber=1 storable=1 path=$(ANALYSED_DIR)/$(ID_ANALYSED)
-	find $(ANALYSED_DIR)/$(ID_ANALYSED) -name "*.streex" | sort > $(ANALYSED_DIR)/$(ID_ANALYSED)/list
+	find $(ANALYSED_DIR)/$(ID_ANALYSED) -name "*.streex" | sed 's/^.*\/\([^\/]*\)$$/\1/' | sort > $(ANALYSED_DIR)/$(ID_ANALYSED)/list
 	perl -e 'print join("\t", "$(ID_ANALYSED)", "$(DATE)", "r$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(ANALYSED_DIR)/history
 	echo $(ID_ANALYSED) > $(ANALYSED_DIR)/last_id
 
