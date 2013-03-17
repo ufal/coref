@@ -60,3 +60,5 @@ A2T::EN::AddCorAct
 
 T2T::SetClauseNumber
 A2T::SetDocOrds
+
+A2T::EN::FixRelClauseNoRelPron add_cor=1
