@@ -127,7 +127,7 @@ $(ANALYSED_DIR)/$(ID_ANALYSED)/list : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE
 	scenarios/analysis.${LANGUAGE}.scen \
 	Util::SetGlobal language=${LANGUAGE} selector=ref \
 	Align::A::MonolingualGreedy to_language=${LANGUAGE} to_selector=src \
-	Align::T::CopyAlignmentFromAlayer to_language=${LANGUAGE} to_selector=src \
+	Align::T::CopyAlignmentFromAlayer to_language=${LANGUAGE} to_selector=src align_type=monolingual del_prev_align=0 \
 	Align::T::AlignGeneratedNodes to_language=${LANGUAGE} to_selector=src \
 	Write::Treex clobber=1 storable=1 path=$(ANALYSED_DIR)/$(ID_ANALYSED)
 	find $(ANALYSED_DIR)/$(ID_ANALYSED) -name "*.streex" | sed 's/^.*\/\([^\/]*\)$$/\1/' | sort > $(ANALYSED_DIR)/$(ID_ANALYSED)/list
