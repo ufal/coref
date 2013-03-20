@@ -113,6 +113,13 @@ analyse:
 	
 analyse_data_set : $(ANALYSED_DIR)/$(ID_ANALYSED)/list
 
+ifeq ($(MONO_ALIGN), 1)
+MONO_ALIGN_BLOCK = Util::SetGlobal language=${LANGUAGE} selector=ref \
+	Align::A::MonolingualGreedy to_language=${LANGUAGE} to_selector=src \
+	Align::T::CopyAlignmentFromAlayer to_language=${LANGUAGE} to_selector=src align_type=monolingual del_prev_align=0 \
+	Align::T::AlignGeneratedNodes to_language=${LANGUAGE} to_selector=src
+endif
+
 $(ANALYSED_DIR)/$(ID_ANALYSED)/list : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list
 	mkdir -p $(ANALYSED_DIR)/$(ID_ANALYSED)
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} \
@@ -125,10 +132,7 @@ $(ANALYSED_DIR)/$(ID_ANALYSED)/list : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE
 	Util::SetGlobal language=${LANGUAGE} selector=src \
 	W2W::CopySentence source_language=${LANGUAGE} source_selector=ref \
 	scenarios/analysis.${LANGUAGE}.scen \
-	Util::SetGlobal language=${LANGUAGE} selector=ref \
-	Align::A::MonolingualGreedy to_language=${LANGUAGE} to_selector=src \
-	Align::T::CopyAlignmentFromAlayer to_language=${LANGUAGE} to_selector=src align_type=monolingual del_prev_align=0 \
-	Align::T::AlignGeneratedNodes to_language=${LANGUAGE} to_selector=src \
+	$(MONO_ALING_BLOCK) \
 	Write::Treex clobber=1 storable=1 path=$(ANALYSED_DIR)/$(ID_ANALYSED)
 	find $(ANALYSED_DIR)/$(ID_ANALYSED) -name "*.streex" | sed 's/^.*\/\([^\/]*\)$$/\1/' | sort > $(ANALYSED_DIR)/$(ID_ANALYSED)/list
 	perl -e 'print join("\t", "$(ID_ANALYSED)", "$(DATE)", "r$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(ANALYSED_DIR)/history
