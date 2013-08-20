@@ -1,0 +1,5 @@
+'my ($src_nodes) = $tnode->get_aligned_nodes;
+foreach my $src_node (@$src_nodes) {
+    $src_node->set_gram_gender( $tnode->gram_gender );
+    $src_node->set_gram_number( $tnode->gram_number );
+}'

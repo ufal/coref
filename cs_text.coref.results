@@ -153,3 +153,26 @@ Treex (DEV + TRAIN_ANALYSED): P: 54.48% (845 / 1551)  R: 43.47% (845 / 1944)  F:
 
 - anaphor_as_candidate=0
 Treex (DEV + TRAIN_ANALYSED): P: 53.30% (839 / 1574)  R: 43.16% (839 / 1944)  F: 47.70%
+
+=========================================================================================
+
+gold.0001.0001.0001	2012-03-12_20-36-26	r8427	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	
+	P: 72.46% (1418 / 1957)	R: 72.94% (1418 / 1944)	F: 72.70%
+gold.0001.0001.0002	2012-03-12_20-45-59	r8427	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	no rearranging of links
+	P: 76.35% (1495 / 1958)	R: 76.90% (1495 / 1944)	F: 76.63%
+gold.0001.0001.0003	2012-03-12_20-53-43	r8427	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	using the original model
+	P: 75.59% (1480 / 1958)	R: 76.13% (1480 / 1944)	F: 75.86%
+analysed.0001.0001.0001	2012-03-13_00-45-18	r8448	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	update requires a new analysis
+	P: 55.99% (897 / 1602)	R: 46.14% (897 / 1944)	F: 50.59%
+analysed.0001.0001.0001	2012-03-13_01-13-01	r8448	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	update requires a new analysis
+	P: 55.99% (897 / 1602)	R: 46.14% (897 / 1944)	F: 50.59%
+analysed.0001.0001.0001	2012-03-13_09-57-11	r8448	DATA_SET=eval	ANAPHOR_AS_CANDIDATE=1	resolving eval
+	P: 55.23% (1029 / 1863)	R: 46.14% (1029 / 2230)	F: 50.28%
+gold.0001.0001.0001	2012-03-13_09-59-30	r8448	DATA_SET=eval	ANAPHOR_AS_CANDIDATE=1	resolving eval - gold
+	P: 77.06% (1730 / 2245)	R: 77.58% (1730 / 2230)	F: 77.32%
+analysed.0001.0002.0002	2012-03-13_10-50-42	r8448	DATA_SET=eval	ANAPHOR_AS_CANDIDATE=1	grammatemes copied from gold standard
+	P: 65.07% (1220 / 1875)	R: 54.71% (1220 / 2230)	F: 59.44%
+analysed.0001.0004.0002	2012-03-13_14-11-18	r8448	DATA_SET=eval	ANAPHOR_AS_CANDIDATE=1	just gender and number copied from gold standard
+	P: 65.70% (1224 / 1863)	R: 54.89% (1224 / 2230)	F: 59.81%
+pdt.analysed.0001.0004.0001	2012-05-04_22-15-08	r8655	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	repeating evaluation after a break
+	P: 52.87% (847 / 1602)	R: 43.57% (847 / 1944)	F: 47.77%

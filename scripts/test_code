@@ -1,0 +1,42 @@
+'use Treex::Tool::Coreference::CS::PronAnaphFilter;
+
+my @antes = $tnode->get_coref_text_nodes;
+my $acf = Treex::Tool::Coreference::CS::PronAnaphFilter->new();
+
+if ((@antes > 0) && $acf->is_candidate($tnode)) {
+    my @cat = map {$tnode->get_attr("gram/" . $_)} qw/person number gender/;
+    
+    my ($epar, @rest) = $tnode->get_eparents;
+    my $par_sempos = "sempos:none";
+    my $par_tag = "tag:none";
+    if (defined $epar) {
+        $par_sempos = $epar->gram_sempos;
+        my $lex_epar = $epar->get_lex_anode;
+        if (defined $lex_epar) {
+            $par_tag = $lex_epar->tag;
+        }
+    }
+
+    my ($align) = $tnode->get_aligned_nodes; 
+    if (defined $align) { 
+        foreach my $a (@$align) { 
+            my @acat = map {$a->get_attr("gram/" . $_)} qw/person number gender/;
+            my ($aepar, @rest) = $a->get_eparents;
+            my $apar_sempos = "sempos:none";
+            my $apar_tag = "tag:none";
+            if (defined $aepar) {
+                $apar_sempos = $aepar->gram_sempos;
+                my $lex_aepar = $aepar->get_lex_anode;
+                if (defined $lex_aepar) {
+                    $apar_tag = $lex_aepar->tag;
+                }
+            }
+
+            print "GRAMS\t";
+            print join "\t", (@cat, $par_sempos, $par_tag);
+            print "\t";
+            print join "\t", (@acat, $apar_sempos, $apar_tag);
+            print "\n";
+        }
+    }
+}' 

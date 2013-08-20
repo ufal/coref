@@ -56,3 +56,36 @@ P: 37.79% (277 / 733)   R: 47.43% (277 / 584)   F: 42.07%
         - DEV+TRAIN_ANALYSED: P: 42.84% (808 / 1886)    R: 56.70% (808 / 1425)  F: 48.81%
     - with A2T::RearrangeCorefLinks
         - DEV+TRAIN_ANALYSED: P: 39.08% (737 / 1886)    R: 51.72% (737 / 1425)  F: 44.52%
+
+
+=========================================================================================
+2012-03-06_16-38-54	r8403	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	original features
+	P: 38.02% (747 / 1965)	R: 52.42% (747 / 1425)	F: 44.07%
+2012-03-06_17-36-41	r8406	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	PRP$ corrected
+	P: 36.95% (725 / 1962)	R: 50.88% (725 / 1425)	F: 42.81%
+2012-03-07_13-05-47	r8417	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	new context features from Charniak & Elsner (2009)
+	P: 38.29% (752 / 1964)	R: 52.77% (752 / 1425)	F: 44.38%
+2012-03-07_13-40-30	r8417	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	calibration, should be the same as r8406
+	P: 36.95% (725 / 1962)	R: 50.88% (725 / 1425)	F: 42.81%
+
+analysed.0001.0001.0001	2012-03-12_18-05-29	r8427	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	
+	P: 39.11% (767 / 1961)	R: 53.82% (767 / 1425)	F: 45.30%
+gold.0001.0001.0001	2012-03-12_18-06-20	r8427	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	
+	P: 34.90% (682 / 1954)	R: 47.86% (682 / 1425)	F: 40.37%
+gold.0001.0003.0002	2012-03-12_19-59-10	r8427	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=0	
+	P: 35.37% (666 / 1883)	R: 46.74% (666 / 1425)	F: 40.27%
+gold.0001.0003.0003	2012-03-12_21-06-27	r8427	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	no rearranging of links
+	P: 40.91% (803 / 1963)	R: 56.35% (803 / 1425)	F: 47.40%
+analysed.0001.0001.0002	2012-03-12_21-13-06	r8427	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	no rearranging of links
+	P: 43.04% (844 / 1961)	R: 59.23% (844 / 1425)	F: 49.85%
+analysed.0002.0002.0003	2012-03-12_23-52-28	r8448	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	update requires a new analysis
+	P: 43.04% (844 / 1961)	R: 59.23% (844 / 1425)	F: 49.85%
+analysed.0002.0002.0001	2012-03-13_09-44-59	r8448	DATA_SET=eval	ANAPHOR_AS_CANDIDATE=1	resolving eval
+	P: 43.66% (1129 / 2586)	R: 56.20% (1129 / 2009)	F: 49.14%
+gold.0001.0003.0001	2012-03-13_10-02-17	r8448	DATA_SET=eval	ANAPHOR_AS_CANDIDATE=1	resolving eval - gold
+	P: 44.17% (1143 / 2588)	R: 56.95% (1143 / 2007)	F: 49.75%
+
+pcedt.analysed.0001.0001.0001	2012-03-14_18-17-48	r8448	DATA_SET=eval	ANAPHOR_AS_CANDIDATE=1	using English side of PCEDT 2.0 - analysed
+	P: 44.53% (1151 / 2585)	R: 57.32% (1151 / 2008)	F: 50.12%
+pcedt.gold.0001.0001.0001	2012-03-14_18-20-45	r8448	DATA_SET=eval	ANAPHOR_AS_CANDIDATE=1	using English side of PCEDT 2.0
+	P: 45.52% (1178 / 2588)	R: 58.69% (1178 / 2007)	F: 51.27%
