@@ -64,7 +64,7 @@ print_dummy-%:
 RUNS_DIR = runs
 
 DATE := $(shell date +%Y-%m-%d_%H-%M-%S)
-TMT_VERSION := $(shell svn info | grep Revision | cut -d ' ' -f 2)
+TMT_VERSION := $(shell echo `git rev-parse --abbrev-ref HEAD`:`git rev-parse HEAD | cut -c 1-10`)
 NEW_NUM  := $(shell perl -e '$$m=0; for(<$(RUNS_DIR)/*>){/\/(\d+)_/ and $$1 > $$m and $$m=$$1;} printf "%03d", $$m+1;')
 NEW_TRY  := $(RUNS_DIR)/$(NEW_NUM)_$(DATE)_$(SHORT_SCEN)
 
@@ -113,6 +113,7 @@ analyse:
 	
 analyse_data_set : $(ANALYSED_DIR)/$(ID_ANALYSED)/list
 
+MONO_ALIGN=1
 ifeq ($(MONO_ALIGN), 1)
 MONO_ALIGN_BLOCK = Util::SetGlobal language=${LANGUAGE} selector=ref \
 	Align::A::MonolingualGreedy to_language=${LANGUAGE} to_selector=src \
@@ -132,10 +133,10 @@ $(ANALYSED_DIR)/$(ID_ANALYSED)/list : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE
 	Util::SetGlobal language=${LANGUAGE} selector=src \
 	W2W::CopySentence source_language=${LANGUAGE} source_selector=ref \
 	scenarios/analysis.${LANGUAGE}.scen \
-	$(MONO_ALING_BLOCK) \
+	$(MONO_ALIGN_BLOCK) \
 	Write::Treex clobber=1 storable=1 path=$(ANALYSED_DIR)/$(ID_ANALYSED)
 	find $(ANALYSED_DIR)/$(ID_ANALYSED) -name "*.streex" | sed 's/^.*\/\([^\/]*\)$$/\1/' | sort > $(ANALYSED_DIR)/$(ID_ANALYSED)/list
-	perl -e 'print join("\t", "$(ID_ANALYSED)", "$(DATE)", "r$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(ANALYSED_DIR)/history
+	perl -e 'print join("\t", "$(ID_ANALYSED)", "$(DATE)", "$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(ANALYSED_DIR)/history
 	echo $(ID_ANALYSED) > $(ANALYSED_DIR)/last_id
 
 
@@ -161,7 +162,7 @@ $(TRAIN_TABLE_GOLD_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : data/${LANGUAGE}/${DA
 	${IS_REFER_BLOCK} \
 	Print::${LANGUAGE_UPPER}::TextPronCorefData anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} \
 		> $(TRAIN_TABLE_GOLD_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
-	perl -e 'print join("\t", "$(ID_TRAIN_TABLE_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "r$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(TRAIN_TABLE_DIR)/history
+	perl -e 'print join("\t", "$(ID_TRAIN_TABLE_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(TRAIN_TABLE_DIR)/history
 	echo $(ID_TRAIN_TABLE) > $(TRAIN_TABLE_DIR)/last_id
 
 #-------------------- ANALYSED -------------------------------
@@ -177,7 +178,7 @@ $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : $(ANALYSED_DIR)/$
 	Util::SetGlobal selector=ref \
 	Print::${LANGUAGE_UPPER}::TextPronCorefData anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} selector=src \
 		> $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
-	perl -e 'print join("\t", "$(ID_TRAIN_TABLE_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "r$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(TRAIN_TABLE_DIR)/history
+	perl -e 'print join("\t", "$(ID_TRAIN_TABLE_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(TRAIN_TABLE_DIR)/history
 	echo $(ID_TRAIN_TABLE) > $(TRAIN_TABLE_ANALYSED_DIR)/last_id
 
 ############################# MODEL ########################################
@@ -194,7 +195,7 @@ model_data_set : $(MODEL_DIR)/$(ID_TRAIN_TABLE_COMBINED).model
 $(MODEL_DIR)/$(ID_TRAIN_TABLE_COMBINED).model : $(TRAIN_TABLE_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
 	mkdir -p $(MODEL_DIR)
 	${TMT_ROOT}/tools/reranker/train -loglevel:FINE -normalizer:dummy $(TRAIN_TABLE_DIR)/$(ID_TRAIN_TABLE_COMBINED).table > $(MODEL_DIR)/$(ID_TRAIN_TABLE_COMBINED).model
-	perl -e 'print join("\t", "$(ID_TRAIN_TABLE_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "r$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(MODEL_DIR)/history
+	perl -e 'print join("\t", "$(ID_TRAIN_TABLE_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(MODEL_DIR)/history
 
 
 ################################ RESOLVE ####################################
@@ -226,7 +227,7 @@ $(RESOLVED_GOLD_DIR)/$(ID_RESOLVED_COMBINED)/list : data/${LANGUAGE}/${DATA_SET}
 		model_path=data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT} \
 	Write::Treex clobber=1 storable=1 path=$(RESOLVED_GOLD_DIR)/$(ID_RESOLVED_COMBINED)
 	find $(RESOLVED_GOLD_DIR)/$(ID_RESOLVED_COMBINED) -name "*.streex" | sort > $(RESOLVED_GOLD_DIR)/$(ID_RESOLVED_COMBINED)/list
-	perl -e 'print join("\t", "$(ID_RESOLVED_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "r$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(RESOLVED_GOLD_DIR)/history
+	perl -e 'print join("\t", "$(ID_RESOLVED_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(RESOLVED_GOLD_DIR)/history
 	echo $(ID_RESOLVED) > $(RESOLVED_GOLD_DIR)/last_id
 
 #-------------------- ANALYSED -------------------------------
@@ -243,7 +244,7 @@ $(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED)/list : $(ANALYSED_DIR)/$(ID_ANA
 		model_path=data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT} \
 	Write::Treex clobber=1 storable=1 path=$(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED)
 	find $(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED) -name "*.streex" | sort > $(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED)/list
-	perl -e 'print join("\t", "$(ID_RESOLVED_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "r$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(RESOLVED_ANALYSED_DIR)/history
+	perl -e 'print join("\t", "$(ID_RESOLVED_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(RESOLVED_ANALYSED_DIR)/history
 	echo $(ID_RESOLVED) > $(RESOLVED_ANALYSED_DIR)/last_id
 
 ################################ EVALUATE ###################################
@@ -252,7 +253,7 @@ eval : $(RESOLVED_DIR)/$(ID_RESOLVED_COMBINED)/list
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
 	Read::Treex from=@$(RESOLVED_DIR)/$(ID_RESOLVED_COMBINED)/list \
 	Eval::Coref just_counts=1 type=text anaphor_type=pron selector=ref > data/${LANGUAGE}/results.${DATA_SET}
-	perl -e 'print join("\t", "$(DATA_SOURCE).$(ANOT).$(ID_RESOLVED_COMBINED)", "$(DATE)", "r${TMT_VERSION}", "DATA_SET=${DATA_SET}", "ANAPHOR_AS_CANDIDATE=${ANAPHOR_AS_CANDIDATE}", '\''${DESC}'\''); print "\n";' >> $(LANGUAGE)_text.coref.results
+	perl -e 'print join("\t", "$(DATA_SOURCE).$(ANOT).$(ID_RESOLVED_COMBINED)", "$(DATE)", "${TMT_VERSION}", "DATA_SET=${DATA_SET}", "ANAPHOR_AS_CANDIDATE=${ANAPHOR_AS_CANDIDATE}", '\''${DESC}'\''); print "\n";' >> $(LANGUAGE)_text.coref.results
 	./eval.pl < data/${LANGUAGE}/results.${DATA_SET} | sed 's/^/\t/' >> $(LANGUAGE)_text.coref.results
 	rm $(DATA_DIR)/results.${DATA_SET}
 	tail $(LANGUAGE)_text.coref.results
