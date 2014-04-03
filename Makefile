@@ -77,7 +77,8 @@ endif
 
 JOBS_NUM = 50
 
-ifeq (${DATA_SET}, train)
+DATA_SET_PREFIX := $(shell echo ${DATA_SET} | cut -d'_' -f1)
+ifeq ($(DATA_SET_PREFIX), train)
 JOBS_NUM = 200
 endif
 
