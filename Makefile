@@ -22,9 +22,9 @@ DATA_DIR = data/$(LANGUAGE)
 
 ANALYSED_DIR = $(DATA_DIR)/analysed/$(DATA_SOURCE)/$(DATA_SET)
 
-TRAIN_TABLE_DIR = $(DATA_DIR)/train_table/$(ANOT)/$(DATA_SOURCE)/train
-TRAIN_TABLE_GOLD_DIR = $(DATA_DIR)/train_table/gold/$(DATA_SOURCE)/train
-TRAIN_TABLE_ANALYSED_DIR = $(DATA_DIR)/train_table/analysed/$(DATA_SOURCE)/train
+TRAIN_TABLE_DIR = $(DATA_DIR)/train_table/$(ANOT)/$(DATA_SOURCE)/$(DATA_SET)
+TRAIN_TABLE_GOLD_DIR = $(DATA_DIR)/train_table/gold/$(DATA_SOURCE)/$(DATA_SET)
+TRAIN_TABLE_ANALYSED_DIR = $(DATA_DIR)/train_table/analysed/$(DATA_SOURCE)/$(DATA_SET)
 
 MODEL_DIR = $(DATA_DIR)/model/$(ANOT)/$(DATA_SOURCE)/$(DATA_SET)
 
@@ -145,7 +145,7 @@ $(ANALYSED_DIR)/$(ID_ANALYSED)/list : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE
 ID_TRAIN_TABLE_COMBINED=$(ID_ANALYSED).$(ID_TRAIN_TABLE)
 
 train_table:
-	@make train_table_data_set DATA_SET=train ID_TRAIN_TABLE=$(ID_TRAIN_TABLE_NEXT)
+	@make train_table_data_set ID_TRAIN_TABLE=$(ID_TRAIN_TABLE_NEXT)
 
 train_table_data_set: $(TRAIN_TABLE_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
 
