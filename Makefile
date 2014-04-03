@@ -178,8 +178,8 @@ $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : $(ANALYSED_DIR)/$
 		${IS_REFER_BLOCK} \
 		Print::${LANGUAGE_UPPER}::TextPronCorefData anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} to='.' substitute='{^.*/(.*)}{tmp/data_table/$$1.$(DATA_SET).$(DATA_SOURCE).txt}'
 	find tmp/data_table -path "*.$(DATA_SET).$(DATA_SOURCE).txt" -exec cat {} \; | gzip -c > $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
-	-rm $(TRAIN_TABLE_ANALYSED_DIR)/table
-	ln -s $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table $(TRAIN_TABLE_ANALYSED_DIR)/table
+	-rm $(DATA_DIR)/$(DATA_SET).$(DATA_SOURCE).$(LANGUAGE).$(ANOT).table
+	ln -s $(PWD)/$(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table $(DATA_DIR)/$(DATA_SET).$(DATA_SOURCE).$(LANGUAGE).$(ANOT).table
 	perl -e 'print join("\t", "$(ID_TRAIN_TABLE_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(TRAIN_TABLE_DIR)/history
 	echo $(ID_TRAIN_TABLE) > $(TRAIN_TABLE_ANALYSED_DIR)/last_id
 
@@ -260,6 +260,22 @@ eval : $(RESOLVED_DIR)/$(ID_RESOLVED_COMBINED)/list
 	./eval.pl < data/${LANGUAGE}/results.${DATA_SET} | sed 's/^/\t/' >> $(LANGUAGE)_text.coref.results
 	rm $(DATA_DIR)/results.${DATA_SET}
 	tail $(LANGUAGE)_text.coref.results
+
+############################## USING ML FRAMEWORK ###########################
+
+ML_FRAMEWORK=/home/mnovak/projects/ml_framework
+RUNS_DIR=tmp/ml
+FEATSET_LIST=conf/$(LANGUAGE).featset_list
+STATS_FILE=$(LANGUAGE).ml_framework.results
+
+tte_feats :
+	$(MAKE) -C $(ML_FRAMEWORK) tte_feats \
+		RANKING=1 \
+		DATA_ID=$(DATA_SOURCE).$(LANGUAGE).$(ANOT) \
+		DATA_DIR=$(PWD)/$(DATA_DIR) \
+		RUNS_DIR=$(PWD)/$(RUNS_DIR) \
+		FEATSET_LIST=$(PWD)/$(FEATSET_LIST) \
+		STATS_FILE=$(PWD)/$(STATS_FILE)
 
 #############################################################################
 
