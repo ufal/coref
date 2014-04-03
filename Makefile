@@ -170,14 +170,13 @@ $(TRAIN_TABLE_GOLD_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : data/${LANGUAGE}/${DA
 
 $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : $(ANALYSED_DIR)/$(ID_ANALYSED)/list
 	mkdir -p $(TRAIN_TABLE_ANALYSED_DIR)
-	treex ${CLUSTER_FLAGS} -L${LANGUAGE} \
-	Read::Treex from=@$(ANALYSED_DIR)/$(ID_ANALYSED)/list \
-	T2T::CopyCorefFromAlignment type=text selector=ref \
-	Util::SetGlobal selector=src \
-	${IS_REFER_BLOCK} \
-	Util::SetGlobal selector=ref \
-	Print::${LANGUAGE_UPPER}::TextPronCorefData anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} selector=src \
-		> $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
+	-treex ${CLUSTER_FLAGS} -L${LANGUAGE} \
+		Read::Treex from=@$(ANALYSED_DIR)/$(ID_ANALYSED)/list \
+		T2T::CopyCorefFromAlignment type=text selector=ref \
+		Util::SetGlobal selector=src \
+		${IS_REFER_BLOCK} \
+		Print::${LANGUAGE_UPPER}::TextPronCorefData anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} to='.' substitute='{^.*/(.*)}{tmp/data_table/$$1.$(DATA_SET).$(DATA_SOURCE).txt}'
+	find tmp/data_table -path "*.$(DATA_SET).$(DATA_SOURCE).txt" -exec cat {} \; > $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
 	perl -e 'print join("\t", "$(ID_TRAIN_TABLE_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(TRAIN_TABLE_DIR)/history
 	echo $(ID_TRAIN_TABLE) > $(TRAIN_TABLE_ANALYSED_DIR)/last_id
 
