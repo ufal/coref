@@ -179,7 +179,7 @@ $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : $(ANALYSED_DIR)/$
 		Util::SetGlobal selector=src \
 		$(DATA_TABLE_SCENARIO) \
 		${IS_REFER_BLOCK} \
-		Print::${LANGUAGE_UPPER}::TextPronCorefData anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} to='.' substitute='{^.*/(.*)}{tmp/data_table/$$1.$(DATA_SET).$(DATA_SOURCE).txt}'
+		Print::${LANGUAGE_UPPER}::TextPronCorefData $(COREF_PRINTER_PARAMS) anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} to='.' substitute='{^.*/(.*)}{tmp/data_table/$$1.$(DATA_SET).$(DATA_SOURCE).txt}'
 	find tmp/data_table -path "*.$(DATA_SET).$(DATA_SOURCE).txt" -exec cat {} \; | gzip -c > $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
 	-rm $(DATA_DIR)/$(DATA_SET).$(DATA_SOURCE).$(LANGUAGE).$(ANOT).table
 	ln -s $(PWD)/$(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table $(DATA_DIR)/$(DATA_SET).$(DATA_SOURCE).$(LANGUAGE).$(ANOT).table
