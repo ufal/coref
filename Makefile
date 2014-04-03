@@ -99,7 +99,7 @@ endif
 
 LRC=1
 ifeq ($(LRC), 1)
-CLUSTER_FLAGS = -p --qsub '-hard -l mem_free=6G -l act_mem_free=6G -l h_vmem=6G' --jobs ${JOBS_NUM}
+CLUSTER_FLAGS = -p --qsub '-hard -l mem_free=2G -l act_mem_free=2G -l h_vmem=2G' --jobs ${JOBS_NUM}
 endif
 
 
@@ -181,7 +181,7 @@ $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : $(ANALYSED_DIR)/$
 		$(DATA_TABLE_SCENARIO) \
 		${IS_REFER_BLOCK} \
 		Print::${LANGUAGE_UPPER}::TextPronCorefData $(COREF_PRINTER_PARAMS) anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} to='.' substitute='{^.*/(.*)}{tmp/data_table/$$1.$(DATA_SET).$(DATA_SOURCE).txt}'
-	find tmp/data_table -path "*.$(DATA_SET).$(DATA_SOURCE).txt" -exec cat {} \; | gzip -c > $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
+	find tmp/data_table -path "*.$(DATA_SET).$(DATA_SOURCE).txt" | sort | xargs cat | gzip -c > $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
 	-rm $(DATA_DIR)/$(DATA_SET).$(DATA_SOURCE).$(LANGUAGE).$(ANOT).table
 	ln -s $(PWD)/$(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table $(DATA_DIR)/$(DATA_SET).$(DATA_SOURCE).$(LANGUAGE).$(ANOT).table
 	perl -e 'print join("\t", "$(ID_TRAIN_TABLE_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(TRAIN_TABLE_DIR)/history
