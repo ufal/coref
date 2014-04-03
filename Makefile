@@ -86,9 +86,9 @@ ifeq ($(DATA_SOURCE), pedt)
   PREPROC_BLOCKS = W2A::EN::SetAfunAuxCPCoord W2A::EN::SetAfun A2T::EN::SetGrammatemes
   DELETE_TRACES = A2W::EN::DeleteTracesFromSentence
 endif
-ifneq (${ANAPHOR_AS_CANDIDATE}, 1)
-  IS_REFER_BLOCK = A2T::EN::MarkReferentialIt
-endif
+#ifneq (${ANAPHOR_AS_CANDIDATE}, 1)
+  IS_REFER_BLOCK = A2T::EN::MarkReferentialIt resolver_type=nada
+#endif
 endif
 
 READ_GOLD_DATA_BLOCK = Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list schema_dir=/net/work/people/mnovak/schemas
