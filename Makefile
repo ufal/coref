@@ -174,6 +174,7 @@ $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : $(ANALYSED_DIR)/$
 	mkdir -p $(TRAIN_TABLE_ANALYSED_DIR)
 	-treex ${CLUSTER_FLAGS} -L${LANGUAGE} \
 		Read::Treex from=@$(ANALYSED_DIR)/$(ID_ANALYSED)/list \
+		A2T::StripCoref type=text selector=src \
 		T2T::CopyCorefFromAlignment type=text selector=ref \
 		Util::SetGlobal selector=src \
 		$(DATA_TABLE_SCENARIO) \
