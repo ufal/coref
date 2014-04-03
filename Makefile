@@ -276,7 +276,7 @@ STATS_FILE=$(LANGUAGE).ml_framework.results
 tte_feats :
 	$(MAKE) -C $(ML_FRAMEWORK) tte_feats \
 		RANKING=1 \
-		DATA_ID=$(DATA_SOURCE).$(LANGUAGE).$(ANOT) \
+		DATA_SOURCE=$(DATA_SOURCE).$(LANGUAGE).$(ANOT) \
 		DATA_DIR=$(PWD)/$(DATA_DIR) \
 		RUNS_DIR=$(PWD)/$(RUNS_DIR) \
 		FEATSET_LIST=$(PWD)/$(FEATSET_LIST) \
