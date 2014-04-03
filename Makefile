@@ -32,6 +32,7 @@ RESOLVED_DIR = $(DATA_DIR)/resolved/$(ANOT)/$(DATA_SOURCE)/$(DATA_SET)
 RESOLVED_GOLD_DIR = $(DATA_DIR)/resolved/gold/$(DATA_SOURCE)/$(DATA_SET)
 RESOLVED_ANALYSED_DIR = $(DATA_DIR)/resolved/analysed/$(DATA_SOURCE)/$(DATA_SET)
 
+TMP_DIR = tmp
 
 ############################### EXPERIMENT IDS ##############################
 
@@ -176,7 +177,9 @@ $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : $(ANALYSED_DIR)/$
 		Util::SetGlobal selector=src \
 		${IS_REFER_BLOCK} \
 		Print::${LANGUAGE_UPPER}::TextPronCorefData anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} to='.' substitute='{^.*/(.*)}{tmp/data_table/$$1.$(DATA_SET).$(DATA_SOURCE).txt}'
-	find tmp/data_table -path "*.$(DATA_SET).$(DATA_SOURCE).txt" -exec cat {} \; > $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
+	find tmp/data_table -path "*.$(DATA_SET).$(DATA_SOURCE).txt" -exec cat {} \; | gzip -c > $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
+	-rm $(TRAIN_TABLE_ANALYSED_DIR)/table
+	ln -s $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table $(TRAIN_TABLE_ANALYSED_DIR)/table
 	perl -e 'print join("\t", "$(ID_TRAIN_TABLE_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(TRAIN_TABLE_DIR)/history
 	echo $(ID_TRAIN_TABLE) > $(TRAIN_TABLE_ANALYSED_DIR)/last_id
 
@@ -193,7 +196,8 @@ model_data_set : $(MODEL_DIR)/$(ID_TRAIN_TABLE_COMBINED).model
 
 $(MODEL_DIR)/$(ID_TRAIN_TABLE_COMBINED).model : $(TRAIN_TABLE_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
 	mkdir -p $(MODEL_DIR)
-	${TMT_ROOT}/tools/reranker/train -loglevel:FINE -normalizer:dummy $(TRAIN_TABLE_DIR)/$(ID_TRAIN_TABLE_COMBINED).table > $(MODEL_DIR)/$(ID_TRAIN_TABLE_COMBINED).model
+	zcat $(TRAIN_TABLE_DIR)/$(ID_TRAIN_TABLE_COMBINED).table > $(TMP_DIR)/unzip/$(ID_TRAIN_TABLE_COMBINED).table
+	${TMT_ROOT}/tools/reranker/train -loglevel:FINE -normalizer:dummy $(TMP_DIR)/unzip/$(ID_TRAIN_TABLE_COMBINED).table > $(MODEL_DIR)/$(ID_TRAIN_TABLE_COMBINED).model
 	perl -e 'print join("\t", "$(ID_TRAIN_TABLE_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(MODEL_DIR)/history
 
 
