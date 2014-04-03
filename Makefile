@@ -122,7 +122,8 @@ MONO_ALIGN_BLOCK = Util::SetGlobal language=${LANGUAGE} selector=ref \
 	Align::T::AlignGeneratedNodes to_language=${LANGUAGE} to_selector=src
 endif
 
-$(ANALYSED_DIR)/$(ID_ANALYSED)/list : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list
+#data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list
+$(ANALYSED_DIR)/$(ID_ANALYSED)/list :
 	mkdir -p $(ANALYSED_DIR)/$(ID_ANALYSED)
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} \
 	$(READ_GOLD_DATA_BLOCK) \
