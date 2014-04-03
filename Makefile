@@ -273,6 +273,8 @@ RUNS_DIR=tmp/ml/$(LANGUAGE)
 FEATSET_LIST=conf/$(LANGUAGE).featset_list
 STATS_FILE=$(LANGUAGE).ml_framework.results
 
+TEST_DATA_NAME=dev
+
 tte_feats :
 	$(MAKE) -C $(ML_FRAMEWORK) tte_feats \
 		RANKING=1 \
@@ -280,7 +282,8 @@ tte_feats :
 		DATA_DIR=$(PWD)/$(DATA_DIR) \
 		RUNS_DIR=$(PWD)/$(RUNS_DIR) \
 		FEATSET_LIST=$(PWD)/$(FEATSET_LIST) \
-		STATS_FILE=$(PWD)/$(STATS_FILE)
+		STATS_FILE=$(PWD)/$(STATS_FILE) \
+		TEST_DATA_NAME=$(TEST_DATA_NAME)
 
 #############################################################################
 
