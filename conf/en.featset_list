@@ -1,3 +1,37 @@
+# aligned : Features from CS alignment
+align_c_sent_dist        align_c_clause_dist         align_c_file_deepord_dist
+       align_c_cand_ord         align_c_anaph_sentord
+       
+       align_c_cand_fun         align_c_anaph_fun           align_b_fun_agree               align_c_join_fun
+       align_c_cand_afun        align_c_anaph_afun          align_b_afun_agree              align_c_join_afun
+       align_b_cand_akt         align_b_anaph_akt           align_b_akt_agree 
+       align_b_cand_subj        align_b_anaph_subj          align_b_subj_agree
+       
+       align_c_cand_gen         align_c_anaph_gen           align_b_gen_agree               align_c_join_gen
+       align_c_cand_num         align_c_anaph_num           align_b_num_agree               align_c_join_num
+       align_c_cand_apos        align_c_anaph_apos                                    align_c_join_apos
+       align_c_cand_asubpos     align_c_anaph_asubpos                                 align_c_join_asubpos
+       align_c_cand_agen        align_c_anaph_agen                                    align_c_join_agen
+       align_c_cand_anum        align_c_anaph_anum                                    align_c_join_anum
+       align_c_cand_acase       align_c_anaph_acase                                   align_c_join_acase
+       align_c_cand_apossgen    align_c_anaph_apossgen                                align_c_join_apossgen
+       align_c_cand_apossnum    align_c_anaph_apossnum                                align_c_join_apossnum
+       align_c_cand_apers       align_c_anaph_apers                                   align_c_join_apers
+       
+       align_b_cand_coord       align_b_app_in_coord
+       align_c_cand_epar_fun    align_c_anaph_epar_fun      align_b_epar_fun_agree          align_c_join_epar_fun
+       align_c_cand_epar_sempos align_c_anaph_epar_sempos   align_b_epar_sempos_agree       align_c_join_epar_sempos
+                                                align_b_epar_lemma_agree        align_c_join_epar_lemma
+                                                                          align_c_join_clemma_aeparlemma
+       align_c_cand_tfa         align_c_anaph_tfa           align_b_tfa_agree               align_c_join_tfa
+       align_b_sibl             align_b_coll                align_r_cnk_coll
+       align_r_cand_freq                            
+       align_b_cand_pers
+       
+       align_cand_ewn_class
+
+<<<EXPERIMENTS>>>
+
 ## 1. a sample of features
 #__SELF__ 
 #    c_sent_dist c_clause_dist c_file_deepord_dist c_cand_ord 
@@ -64,42 +98,10 @@ __SELF__
 @orig_linh+ne+ewn
        b_anaph_referential
 
-# aligned : Features from CS alignment
-align_c_sent_dist        align_c_clause_dist         align_c_file_deepord_dist
-       align_c_cand_ord         align_c_anaph_sentord
-       
-       align_c_cand_fun         align_c_anaph_fun           align_b_fun_agree               align_c_join_fun
-       align_c_cand_afun        align_c_anaph_afun          align_b_afun_agree              align_c_join_afun
-       align_b_cand_akt         align_b_anaph_akt           align_b_akt_agree 
-       align_b_cand_subj        align_b_anaph_subj          align_b_subj_agree
-       
-       align_c_cand_gen         align_c_anaph_gen           align_b_gen_agree               align_c_join_gen
-       align_c_cand_num         align_c_anaph_num           align_b_num_agree               align_c_join_num
-       align_c_cand_apos        align_c_anaph_apos                                    align_c_join_apos
-       align_c_cand_asubpos     align_c_anaph_asubpos                                 align_c_join_asubpos
-       align_c_cand_agen        align_c_anaph_agen                                    align_c_join_agen
-       align_c_cand_anum        align_c_anaph_anum                                    align_c_join_anum
-       align_c_cand_acase       align_c_anaph_acase                                   align_c_join_acase
-       align_c_cand_apossgen    align_c_anaph_apossgen                                align_c_join_apossgen
-       align_c_cand_apossnum    align_c_anaph_apossnum                                align_c_join_apossnum
-       align_c_cand_apers       align_c_anaph_apers                                   align_c_join_apers
-       
-       align_b_cand_coord       align_b_app_in_coord
-       align_c_cand_epar_fun    align_c_anaph_epar_fun      align_b_epar_fun_agree          align_c_join_epar_fun
-       align_c_cand_epar_sempos align_c_anaph_epar_sempos   align_b_epar_sempos_agree       align_c_join_epar_sempos
-                                                align_b_epar_lemma_agree        align_c_join_epar_lemma
-                                                                          align_c_join_clemma_aeparlemma
-       align_c_cand_tfa         align_c_anaph_tfa           align_b_tfa_agree               align_c_join_tfa
-       align_b_sibl             align_b_coll                align_r_cnk_coll
-       align_r_cand_freq                            
-       align_b_cand_pers
-       
-       align_cand_ewn_class
-
-# 10. #8 + feature from alignment
+# aligned_all : mono_all + feature from alignment
 @mono_all @aligned
 
-# 11. #9 + feature from alignment
+# aligned_all-charniak : mono_all-charniak + feature from alignment
 @mono_all-charniak @aligned
 
 ## 12. #6 + selection of features from alignment (genders and numbers)
