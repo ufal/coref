@@ -265,7 +265,7 @@ eval : $(RESOLVED_DIR)/$(ID_RESOLVED_COMBINED)/list
 ############################## USING ML FRAMEWORK ###########################
 
 ML_FRAMEWORK=/home/mnovak/projects/ml_framework
-RUNS_DIR=tmp/ml
+RUNS_DIR=tmp/ml/$(LANGUAGE)
 FEATSET_LIST=conf/$(LANGUAGE).featset_list
 STATS_FILE=$(LANGUAGE).ml_framework.results
 
