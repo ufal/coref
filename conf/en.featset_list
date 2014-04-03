@@ -103,10 +103,10 @@ __SELF__
 @mono_all-charniak @aligned
 
 # aligned_coref+mono_all : mono_all + coref from alignment
-@mono_all aligned_is_coref
+@mono_all align_is_coref
 
 # aligned_all+coref+mono_all : mono_all + coref and all features from alignment
-@mono_all @aligned aligned_is_coref
+@mono_all @aligned align_is_coref
 
 <<<EXPERIMENTS>>>
 
@@ -118,7 +118,7 @@ __SELF__
 #orig_linh+ne+ewn
 mono_all
 #mono_all-charniak
-#aligned_all
+aligned_all
 #aligned_all-charniak
 aligned_coref+mono_all
 aligned_all+coref+mono_all
