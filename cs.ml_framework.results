@@ -1,0 +1,34 @@
+DATE:\t2013-11-17_13-35-54
+FEATS:	__SELF__, c_sent_dist, c_clause_dist, c_file_deepord_dist, c_cand_ord, c_cand_fun, c_anaph_fun, b_fun_agree, c_join_fun, c_cand_afun, c_anaph_afun, b_afun_agree, c_join_afun, b_cand_akt, b_anaph_akt, b_akt_agree, b_cand_subj, b_anaph_subj, b_subj_agree
+INFO:	2013-11-17_13-35-58	pdt.cs.analysed	bitext_coref:898fb145bf	6846807478	d5c1333016
+ML_METHOD:	vw.ranking --passes 10 --l2 0.00001
+TRAIN:	40.12 (6229/15525)
+	41.55 (2538/6108)
+	21.97 (2538/11551)
+	28.74 
+DEV:	46.80 (1081/2310)
+	36.73 (281/765)
+	19.25 (281/1460)
+	25.26 
+FEATS:	__SELF__, c_sent_dist, c_clause_dist, c_file_deepord_dist, c_cand_ord, c_anaph_sentord, c_cand_fun, c_anaph_fun, b_fun_agree, c_join_fun, c_cand_afun, c_anaph_afun, b_afun_agree, c_join_afun, b_cand_akt, b_anaph_akt, b_akt_agree, b_cand_subj, b_anaph_subj, b_subj_agree, c_cand_gen, c_anaph_gen, b_gen_agree, c_join_gen, c_cand_num, c_anaph_num, b_num_agree, c_join_num, c_cand_apos, c_anaph_apos, c_join_apos, c_cand_asubpos, c_anaph_asubpos, c_join_asubpos, c_cand_agen, c_anaph_agen, c_join_agen, c_cand_anum, c_anaph_anum, c_join_anum, c_cand_acase, c_anaph_acase, c_join_acase, c_cand_apossgen, c_anaph_apossgen, c_join_apossgen, c_cand_apossnum, c_anaph_apossnum, c_join_apossnum, c_cand_apers, c_anaph_apers, c_join_apers, b_cand_coord, b_app_in_coord, c_cand_epar_fun, c_anaph_epar_fun, b_epar_fun_agree, c_join_epar_fun, c_cand_epar_sempos, c_anaph_epar_sempos, b_epar_sempos_agree, c_join_epar_sempos, b_epar_lemma_agree, c_join_epar_lemma, c_join_clemma_aeparlemma, c_cand_tfa, c_anaph_tfa, b_tfa_agree, c_join_tfa, b_sibl, b_coll, r_cnk_coll, r_cand_freq, b_cand_pers
+INFO:	2013-11-17_13-36-28	pdt.cs.analysed	bitext_coref:898fb145bf	6846807478	c57054d92a
+ML_METHOD:	vw.ranking --passes 10 --l2 0.00001
+TRAIN:	72.40 (11240/15525)
+	83.15 (7606/9147)
+	65.84 (7606/11553)
+	73.49 
+DEV:	54.24 (1253/2310)
+	51.30 (591/1152)
+	40.48 (591/1460)
+	45.25 
+FEATS:	__SELF__, c_sent_dist, c_clause_dist, c_file_deepord_dist, c_cand_ord, c_anaph_sentord, c_cand_fun, c_anaph_fun, b_fun_agree, c_join_fun, c_cand_afun, c_anaph_afun, b_afun_agree, c_join_afun, b_cand_akt, b_anaph_akt, b_akt_agree, b_cand_subj, b_anaph_subj, b_subj_agree, c_cand_gen, c_anaph_gen, b_gen_agree, c_join_gen, c_cand_num, c_anaph_num, b_num_agree, c_join_num, c_cand_apos, c_anaph_apos, c_join_apos, c_cand_asubpos, c_anaph_asubpos, c_join_asubpos, c_cand_agen, c_anaph_agen, c_join_agen, c_cand_anum, c_anaph_anum, c_join_anum, c_cand_acase, c_anaph_acase, c_join_acase, c_cand_apossgen, c_anaph_apossgen, c_join_apossgen, c_cand_apossnum, c_anaph_apossnum, c_join_apossnum, c_cand_apers, c_anaph_apers, c_join_apers, b_cand_coord, b_app_in_coord, c_cand_epar_fun, c_anaph_epar_fun, b_epar_fun_agree, c_join_epar_fun, c_cand_epar_sempos, c_anaph_epar_sempos, b_epar_sempos_agree, c_join_epar_sempos, b_epar_lemma_agree, c_join_epar_lemma, c_join_clemma_aeparlemma, c_cand_tfa, c_anaph_tfa, b_tfa_agree, c_join_tfa, b_sibl, b_coll, r_cnk_coll, r_cand_freq, b_cand_pers, cand_ewn_class
+INFO:	2013-11-17_13-36-57	pdt.cs.analysed	bitext_coref:898fb145bf	6846807478	4e224b442c
+ML_METHOD:	vw.ranking --passes 10 --l2 0.00001
+TRAIN:	77.53 (12037/15525)
+	86.19 (8493/9854)
+	73.51 (8493/11554)
+	79.34 
+DEV:	56.58 (1307/2310)
+	53.90 (677/1256)
+	46.37 (677/1460)
+	49.85 
