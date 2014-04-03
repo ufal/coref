@@ -176,3 +176,5 @@ analysed.0001.0004.0002	2012-03-13_14-11-18	r8448	DATA_SET=eval	ANAPHOR_AS_CANDI
 	P: 65.70% (1224 / 1863)	R: 54.89% (1224 / 2230)	F: 59.81%
 pdt.analysed.0001.0004.0001	2012-05-04_22-15-08	r8655	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	repeating evaluation after a break
 	P: 52.87% (847 / 1602)	R: 43.57% (847 / 1944)	F: 47.77%
+pdt.analysed.0001.0006.0001	2013-11-17_19-47-58	bitext_coref:d311c41510	DATA_SET=dev	ANAPHOR_AS_CANDIDATE=1	using VW.csoaa_ldf model
+	P: 59.91% (656 / 1095)	R: 33.74% (656 / 1944)	F: 43.17%
