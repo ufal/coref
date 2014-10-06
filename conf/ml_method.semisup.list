@@ -6,7 +6,7 @@
 #vw.ranking:mc --loss_function logistic --passes 20
 vw.ranking:mc --loss_function logistic --passes 30
 #vw.ranking:mc --loss_function logistic --passes 40
-#vw.ranking:mc --loss_function logistic --passes 60
+vw.ranking:mc --loss_function logistic --passes 60
 #vw.ranking:mc --loss_function logistic --passes 80
 #vw.ranking:m --passes 40 -q dd
 #vw.ranking:mc --loss_function logistic --passes 40 -q dd
