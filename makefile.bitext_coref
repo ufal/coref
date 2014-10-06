@@ -10,6 +10,7 @@ TEST_DATA=tmp/ml/run_2014-07-18_12-03-44/001.8f801ad5b1.featset/data/processed/d
 TRAIN_DATA=tmp/ml/run_2014-07-18_12-03-44/001.8f801ad5b1.featset/data/processed/train.pcedt_bi.en.analysed.table
 UNLABELED_DATA=tmp/ml/run_2014-07-18_12-03-44/001.8f801ad5b1.featset/data/processed/train.czeng_0.en.analysed.part_*
 
+ITER_COUNT=10
 MAX_LOSS=0
 DELIBLE=1
 
@@ -22,9 +23,9 @@ self_training :
         TEST_DATA=$(TEST_DATA) \
         "UNLABELED_DATA=$(UNLABELED_DATA)" \
         ML_METHOD_LIST=conf/ml_method.list \
+		ITER_COUNT=$(ITER_COUNT) \
         MAX_LOSS=$(MAX_LOSS) \
         "ML_PARAMS_FOR_UNLABELED=mc --loss_function logistic --passes 1" \
         DELIBLE=$(DELIBLE) \
         LRC=$(LRC) \
         TMP_DIR=tmp/ml
-
