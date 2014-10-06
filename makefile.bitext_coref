@@ -15,7 +15,7 @@ DELIBLE=1
 
         #FEATSET_LIST=conf/en.featset_list 
 self_training :
-	$(ML_FRAMEWORK)/run_experiment.sh -f conf/params.ini \
+	$(ML_FRAMEWORK)/run.sh -f conf/params.ini \
         EXPERIMENT_TYPE=self-training \
         "DATA_LIST=UNLABELED_DATA TRAIN_DATA TEST_DATA" \
         TRAIN_DATA=$(TRAIN_DATA) \
