@@ -53,7 +53,7 @@ self_training :
         TEST_DATA=$(TEST_DATA) \
         "UNLABELED_DATA=$(UNLABELED_DATA)" \
         FEATSET_LIST=conf/$(LANGUAGE).featset_list \
-		ML_METHOD_LIST=conf/ml_method.list \
+		ML_METHOD_LIST=conf/ml_method.semisup.list \
 		ITER_COUNT=$(ITER_COUNT) \
         MAX_LOSS=$(MAX_LOSS) \
         "ML_PARAMS_FOR_UNLABELED=mc --loss_function logistic --passes 1" \
@@ -74,7 +74,7 @@ co_training_ali :
         L2_TRAIN_DATA=$(CS_TRAIN_DATA) \
         L2_TEST_DATA=$(CS_TEST_DATA) \
         L2_UNLABELED_DATA="$(CS_UNLABELED_DATA)" \
-        ML_METHOD_LIST=conf/ml_method.list \
+        ML_METHOD_LIST=conf/ml_method.semisup.list \
 		ITER_COUNT=$(ITER_COUNT) \
         MAX_LOSS=$(MAX_LOSS) \
         ML_PARAMS_FOR_UNLABELED="mc --loss_function logistic --passes 1" \
