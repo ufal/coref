@@ -1,7 +1,3 @@
 # experiments should be run on automatically processed annotations => "src" selector
-# we consider PCEDT a labeled data => get true labels from its gold part
-A2T::StripCoref type=text selector=src
-T2T::CopyCorefFromAlignment type=text selector=ref
-
 Util::SetGlobal selector=src
 A2T::EN::MarkReferentialIt resolver_type=nada
