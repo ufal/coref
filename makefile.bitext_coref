@@ -28,4 +28,5 @@ self_training :
         "ML_PARAMS_FOR_UNLABELED=mc --loss_function logistic --passes 1" \
         DELIBLE=$(DELIBLE) \
         LRC=$(LRC) \
-        TMP_DIR=tmp/ml
+        TMP_DIR=tmp/ml \
+		D=$(D)
