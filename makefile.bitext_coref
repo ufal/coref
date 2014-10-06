@@ -40,7 +40,10 @@ lang_test :
 	@echo "$(UNLABELED_DATA)"
 
 ITER_COUNT=10
-MAX_LOSS=0
+SELECTION_METRICS_TYPE=min_loss
+#SELECTION_METRICS_TYPE=diff_loss
+#SELECTION_METRICS_TYPE=avg_diff_loss
+SELECTION_METRICS_THRESHOLD=0
 DELIBLE=1
 
 #		UNLABELED_SPLIT_SIZE=300000 
@@ -52,9 +55,10 @@ self_training :
         TRAIN_DATA=$(TRAIN_DATA) \
         TEST_DATA=$(TEST_DATA) \
         "UNLABELED_DATA=$(UNLABELED_DATA)" \
-        FEATSET_LIST=conf/$(LANGUAGE).featset_list \
 		ML_METHOD_LIST=conf/ml_method.semisup.list \
 		ITER_COUNT=$(ITER_COUNT) \
+		SELECTION_METRICS_TYPE=$(SELECTION_METRICS_TYPE) \
+		SELECTION_METRICS_THRESHOLD=$(SELECTION_METRICS_THRESHOLD) \
         MAX_LOSS=$(MAX_LOSS) \
         "ML_PARAMS_FOR_UNLABELED=mc --loss_function logistic --passes 1" \
         DELIBLE=$(DELIBLE) \
@@ -76,7 +80,8 @@ co_training_ali :
         L2_UNLABELED_DATA="$(CS_UNLABELED_DATA)" \
         ML_METHOD_LIST=conf/ml_method.semisup.list \
 		ITER_COUNT=$(ITER_COUNT) \
-        MAX_LOSS=$(MAX_LOSS) \
+		SELECTION_METRICS_TYPE=$(SELECTION_METRICS_TYPE) \
+		SELECTION_METRICS_THRESHOLD=$(SELECTION_METRICS_THRESHOLD) \
         ML_PARAMS_FOR_UNLABELED="mc --loss_function logistic --passes 1" \
         DELIBLE=$(DELIBLE) \
 		SPLIT=$(SPLIT) \
