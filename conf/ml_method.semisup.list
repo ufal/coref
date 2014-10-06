@@ -2,7 +2,7 @@
 #vw.ranking:m --passes 20
 #vw.ranking:m --passes 30
 #vw.ranking:m --passes 40
-vw.ranking:mc --loss_function logistic --passes 10
+#vw.ranking:mc --loss_function logistic --passes 10
 #vw.ranking:mc --loss_function logistic --passes 20
 vw.ranking:mc --loss_function logistic --passes 30
 #vw.ranking:mc --loss_function logistic --passes 40

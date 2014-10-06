@@ -3,11 +3,11 @@
 #vw.ranking:m --passes 30
 #vw.ranking:m --passes 40
 vw.ranking:mc --loss_function logistic --passes 10
-#vw.ranking:mc --loss_function logistic --passes 20
+vw.ranking:mc --loss_function logistic --passes 20
 vw.ranking:mc --loss_function logistic --passes 30
-#vw.ranking:mc --loss_function logistic --passes 40
-#vw.ranking:mc --loss_function logistic --passes 60
-#vw.ranking:mc --loss_function logistic --passes 80
+vw.ranking:mc --loss_function logistic --passes 40
+vw.ranking:mc --loss_function logistic --passes 60
+vw.ranking:mc --loss_function logistic --passes 80
 #vw.ranking:m --passes 40 -q dd
 #vw.ranking:mc --loss_function logistic --passes 40 -q dd
 # vw.ranking:m --passes 10 --l2 0.001
@@ -66,12 +66,12 @@ vw.ranking:mc --loss_function logistic --passes 30
 #vw.ranking:m --passes 20 --l2 0.000005
 #vw.ranking:m --passes 30 --l2 0.000005
 #vw.ranking:m --passes 40 --l2 0.000005
-#vw.ranking:mc --loss_function logistic --passes 10 --l2 0.000005
-#vw.ranking:mc --loss_function logistic --passes 20 --l2 0.000005
-#vw.ranking:mc --loss_function logistic --passes 30 --l2 0.000005
-#vw.ranking:mc --loss_function logistic --passes 40 --l2 0.000005
-#vw.ranking:mc --loss_function logistic --passes 60 --l2 0.000005
-#vw.ranking:mc --loss_function logistic --passes 80 --l2 0.000005
+vw.ranking:mc --loss_function logistic --passes 10 --l2 0.000005
+vw.ranking:mc --loss_function logistic --passes 20 --l2 0.000005
+vw.ranking:mc --loss_function logistic --passes 30 --l2 0.000005
+vw.ranking:mc --loss_function logistic --passes 40 --l2 0.000005
+vw.ranking:mc --loss_function logistic --passes 60 --l2 0.000005
+vw.ranking:mc --loss_function logistic --passes 80 --l2 0.000005
 #vw.ranking:mc --loss_function logistic --passes 10 --l1 0.000005
 #vw.ranking:mc --loss_function logistic --passes 20 --l1 0.000005
 #vw.ranking:mc --loss_function logistic --passes 30 --l1 0.000005
@@ -82,12 +82,12 @@ vw.ranking:mc --loss_function logistic --passes 30
 #vw.ranking:m --passes 20 --l2 0.000001
 #vw.ranking:m --passes 30 --l2 0.000001
 #vw.ranking:m --passes 40 --l2 0.000001
-#vw.ranking:mc --loss_function logistic --passes 10 --l2 0.000001
-#vw.ranking:mc --loss_function logistic --passes 20 --l2 0.000001
-#vw.ranking:mc --loss_function logistic --passes 30 --l2 0.000001
-#vw.ranking:mc --loss_function logistic --passes 40 --l2 0.000001
-#vw.ranking:mc --loss_function logistic --passes 60 --l2 0.000001
-#vw.ranking:mc --loss_function logistic --passes 80 --l2 0.000001
+vw.ranking:mc --loss_function logistic --passes 10 --l2 0.000001
+vw.ranking:mc --loss_function logistic --passes 20 --l2 0.000001
+vw.ranking:mc --loss_function logistic --passes 30 --l2 0.000001
+vw.ranking:mc --loss_function logistic --passes 40 --l2 0.000001
+vw.ranking:mc --loss_function logistic --passes 60 --l2 0.000001
+vw.ranking:mc --loss_function logistic --passes 80 --l2 0.000001
 #vw.ranking:mc --loss_function logistic --passes 10 --l1 0.000001
 #vw.ranking:mc --loss_function logistic --passes 20 --l1 0.000001
 #vw.ranking:mc --loss_function logistic --passes 30 --l1 0.000001
