@@ -1,20 +1,50 @@
 ML_FRAMEWORK=/home/mnovak/projects/ml_framework
 LRC=0
 
-#TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/en/train.pcedt_bi.en.analysed.table
-#TEST_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.table
-#UNLABELED_DATA=tmp/ml/data/train.czeng_0.en.analysed.part_*
+LANGUAGE=en
 
-# filtered out; see tmp/ml/run_2014-07-23_00-10-16/001.8f801ad5b1.featset/data/log/preproc.000.o1460721
-TEST_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/dev.pcedt_bi.en.analysed.table
-TRAIN_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/train.pcedt_bi.en.analysed.table
-UNLABELED_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/train.czeng_0.en.analysed.part_*
+#EN_TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/en/train.pcedt_bi.en.analysed.table
+#EN_TEST_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.table
+#EN_UNLABELED_DATA=tmp/ml/data/train.czeng_0.en.analysed.part_*
+
+#CS_TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/cs/train.pdt.cs.analysed.table
+#CS_TEST_DATA=/home/mnovak/projects/czeng_coref/data/cs/dev.pdt.cs.analysed.table
+##CS_UNLABELED_DATA=/home/mnovak/projects/czeng_coref/data/cs/train.czeng_0.cs.analysed.table
+#CS_UNLABELED_DATA=tmp/ml/data/train.czeng_0.cs.analysed.part_*
+
+########### filtered out; see tmp/ml/run_2014-07-23_00-10-16/001.8f801ad5b1.featset/data/log/preproc.000.o1460721 ######################
+
+EN_TEST_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/dev.pcedt_bi.en.analysed.table
+EN_TRAIN_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/train.pcedt_bi.en.analysed.table
+EN_UNLABELED_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/train.czeng_0.en.analysed.part_*
+#UNLABELED_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/skuska.part_*
+
+########### filtered out; see tmp/ml/run_2014-07-31_14-24-59/001.4e224b442c.featset/data/log/preproc.001.o1545951 ######################
+
+CS_TRAIN_DATA=tmp/ml/run_2014-07-31_14-24-59/001.4e224b442c.featset/data/processed/train.pdt.cs.analysed.table
+CS_TEST_DATA=tmp/ml/run_2014-07-31_14-24-59/001.4e224b442c.featset/data/processed/dev.pdt.cs.analysed.table
+CS_UNLABELED_DATA=tmp/ml/run_2014-07-31_14-24-59/001.4e224b442c.featset/data/processed/train.czeng_0.cs.analysed.part_*
+
+ifeq ($(LANGUAGE),en)
+TEST_DATA:=$(EN_TEST_DATA)
+TRAIN_DATA:=$(EN_TRAIN_DATA)
+UNLABELED_DATA:=$(EN_UNLABELED_DATA)
+else
+TEST_DATA:=$(CS_TEST_DATA)
+TRAIN_DATA:=$(CS_TRAIN_DATA)
+UNLABELED_DATA:=$(CS_UNLABELED_DATA)
+endif
+
+lang_test :
+	@echo "$(TEST_DATA)"
+	@echo "$(TRAIN_DATA)"
+	@echo "$(UNLABELED_DATA)"
 
 ITER_COUNT=10
 MAX_LOSS=0
 DELIBLE=1
 
-#        FEATSET_LIST=conf/en.featset_list 
+#        FEATSET_LIST=conf/$(LANGUAGE).featset_list 
 self_training :
 	$(ML_FRAMEWORK)/run.sh -f conf/params.ini \
         EXPERIMENT_TYPE=self-training \
@@ -22,10 +52,34 @@ self_training :
         TRAIN_DATA=$(TRAIN_DATA) \
         TEST_DATA=$(TEST_DATA) \
         "UNLABELED_DATA=$(UNLABELED_DATA)" \
+        FEATSET_LIST=conf/$(LANGUAGE).featset_list \
         ML_METHOD_LIST=conf/ml_method.list \
 		ITER_COUNT=$(ITER_COUNT) \
         MAX_LOSS=$(MAX_LOSS) \
         "ML_PARAMS_FOR_UNLABELED=mc --loss_function logistic --passes 1" \
+        DELIBLE=$(DELIBLE) \
+        LRC=$(LRC) \
+        TMP_DIR=tmp/ml \
+		D="$(D)"
+
+EN_TEST_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/dev.pcedt_bi.en.analysed.table
+EN_TRAIN_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/train.pcedt_bi.en.analysed.table
+EN_UNLABELED_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/train.czeng_0.en.analysed.part_*
+
+co_training_ali :
+	$(ML_FRAMEWORK)/run.sh -f conf/params.ini \
+        EXPERIMENT_TYPE=co-training_align \
+        DATA_LIST="L1_UNLABELED_DATA L1_TRAIN_DATA L1_TEST_DATA L2_UNLABELED_DATA L2_TRAIN_DATA L2_TEST_DATA" \
+        L1_TRAIN_DATA=$(EN_TRAIN_DATA) \
+        L1_TEST_DATA=$(EN_TEST_DATA) \
+        L1_UNLABELED_DATA="$(EN_UNLABELED_DATA)" \
+        L2_TRAIN_DATA=$(CS_TRAIN_DATA) \
+        L2_TEST_DATA=$(CS_TEST_DATA) \
+        L2_UNLABELED_DATA="$(CS_UNLABELED_DATA)" \
+        ML_METHOD_LIST=conf/ml_method.list \
+		ITER_COUNT=$(ITER_COUNT) \
+        MAX_LOSS=$(MAX_LOSS) \
+        ML_PARAMS_FOR_UNLABELED="mc --loss_function logistic --passes 1" \
         DELIBLE=$(DELIBLE) \
         LRC=$(LRC) \
         TMP_DIR=tmp/ml \
