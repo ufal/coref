@@ -6,15 +6,15 @@ LRC=0
 #UNLABELED_DATA=tmp/ml/data/train.czeng_0.en.analysed.part_*
 
 # filtered out; see tmp/ml/run_2014-07-23_00-10-16/001.8f801ad5b1.featset/data/log/preproc.000.o1460721
-TEST_DATA=tmp/ml/run_2014-07-18_12-03-44/001.8f801ad5b1.featset/data/processed/dev.pcedt_bi.en.analysed.table
-TRAIN_DATA=tmp/ml/run_2014-07-18_12-03-44/001.8f801ad5b1.featset/data/processed/train.pcedt_bi.en.analysed.table
-UNLABELED_DATA=tmp/ml/run_2014-07-18_12-03-44/001.8f801ad5b1.featset/data/processed/train.czeng_0.en.analysed.part_*
+TEST_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/dev.pcedt_bi.en.analysed.table
+TRAIN_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/train.pcedt_bi.en.analysed.table
+UNLABELED_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/train.czeng_0.en.analysed.part_*
 
 ITER_COUNT=10
 MAX_LOSS=0
 DELIBLE=1
 
-        #FEATSET_LIST=conf/en.featset_list 
+#        FEATSET_LIST=conf/en.featset_list 
 self_training :
 	$(ML_FRAMEWORK)/run.sh -f conf/params.ini \
         EXPERIMENT_TYPE=self-training \
