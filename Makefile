@@ -271,22 +271,27 @@ eval : $(RESOLVED_DIR)/$(ID_RESOLVED_COMBINED)/list
 
 ############################## USING ML FRAMEWORK ###########################
 
-ML_FRAMEWORK=/home/mnovak/projects/ml_framework
-RUNS_DIR=tmp/ml/$(LANGUAGE)
-FEATSET_LIST=conf/$(LANGUAGE).featset_list
-STATS_FILE=$(LANGUAGE).ml_framework.results
+#TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/en/train_00-18.pcedt_bi.en.analysed.ali-mgiza.table
+TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/en/train_00-18.pcedt_bi.en.analysed.ali-sup.table
+#DEV_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.ali-mgiza.table
+DEV_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.ali-sup.table
+#EVAL_DATA=/home/mnovak/projects/czeng_coref/data/en/eval.pcedt_bi.en.analysed.ali-mgiza.table
+EVAL_DATA=/home/mnovak/projects/czeng_coref/data/en/eval.pcedt_bi.en.analysed.ali-sup.table
 
-TEST_DATA_NAME=dev
+train_test :
+	$(ML_FRAMEWORK_DIR)/run.sh -f conf/params.ini \
+        EXPERIMENT_TYPE=train_test \
+        DATA_LIST="TRAIN_DATA DEV_DATA EVAL_DATA" \
+		TEST_DATA_LIST="TRAIN_DATA DEV_DATA EVAL_DATA" \
+        TRAIN_DATA=$(TRAIN_DATA) \
+        DEV_DATA=$(DEV_DATA) \
+        EVAL_DATA=$(EVAL_DATA) \
+        FEATSET_LIST=conf/$(LANGUAGE).featset_list \
+        ML_METHOD_LIST=conf/ml_method.list \
+        LRC=$(LRC) \
+        TMP_DIR=tmp/ml \
+        D="$(D)"
 
-tte_feats :
-	$(MAKE) -C $(ML_FRAMEWORK) tte_feats \
-		RANKING=1 \
-		DATA_SOURCE=$(DATA_SOURCE).$(LANGUAGE).$(ANOT) \
-		DATA_DIR=$(PWD)/$(DATA_DIR) \
-		RUNS_DIR=$(PWD)/$(RUNS_DIR) \
-		FEATSET_LIST=$(PWD)/$(FEATSET_LIST) \
-		STATS_FILE=$(PWD)/$(STATS_FILE) \
-		TEST_DATA_NAME=$(TEST_DATA_NAME)
 
 #############################################################################
 
