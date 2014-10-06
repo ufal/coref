@@ -178,7 +178,7 @@ endif
 
 $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : $(ANALYSED_DIR)/$(ID_ANALYSED)/list
 	mkdir -p $(TRAIN_TABLE_ANALYSED_DIR)
-	-treex ${CLUSTER_FLAGS} \
+	-treex ${CLUSTER_FLAGS} --workdir tmp/treex_runs \
 		Read::Treex from=@$(ANALYSED_DIR)/$(ID_ANALYSED)/list \
 		scenarios/$(CLEAN_DATA_SOURCE).$(LANGUAGE).before_data_table.scen \
 		$(DATA_TABLE_SCENARIO) \
