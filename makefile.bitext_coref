@@ -66,6 +66,8 @@ EN_TEST_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processe
 EN_TRAIN_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/train.pcedt_bi.en.analysed.table
 EN_UNLABELED_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/train.czeng_0.en.analysed.part_*
 
+SPLIT=1
+
 co_training_ali :
 	$(ML_FRAMEWORK)/run.sh -f conf/params.ini \
         EXPERIMENT_TYPE=co-training_align \
@@ -81,6 +83,7 @@ co_training_ali :
         MAX_LOSS=$(MAX_LOSS) \
         ML_PARAMS_FOR_UNLABELED="mc --loss_function logistic --passes 1" \
         DELIBLE=$(DELIBLE) \
+		SPLIT=$(SPLIT) \
         LRC=$(LRC) \
         TMP_DIR=tmp/ml \
 		D="$(D)"
