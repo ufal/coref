@@ -1,0 +1,25 @@
+ML_FRAMEWORK=/home/mnovak/projects/ml_framework
+LRC=0
+
+TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/en/train.pcedt_bi.en.analysed.table
+TEST_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.table
+UNLABELED_DATA=tmp/ml/data/train.czeng_0.en.analysed.part_*
+
+MAX_LOSS=0
+DELIBLE=1
+
+self_training :
+	$(ML_FRAMEWORK)/run_experiment.sh -f conf/params.ini \
+        EXPERIMENT_TYPE=self-training \
+        "DATA_LIST=UNLABELED_DATA TRAIN_DATA TEST_DATA" \
+        TRAIN_DATA=$(TRAIN_DATA) \
+        TEST_DATA=$(TEST_DATA) \
+        "UNLABELED_DATA=$(UNLABELED_DATA)" \
+        FEATSET_LIST=conf/en.featset_list \
+        ML_METHOD_LIST=conf/ml_method.list \
+        MAX_LOSS=$(MAX_LOSS) \
+        "ML_PARAMS_FOR_UNLABELED=mc --loss_function logistic --passes 1" \
+        DELIBLE=$(DELIBLE) \
+        LRC=$(LRC) \
+        TMP_DIR=tmp/ml
+
