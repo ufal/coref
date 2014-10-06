@@ -59,7 +59,6 @@ self_training :
 		ITER_COUNT=$(ITER_COUNT) \
 		SELECTION_METRICS_TYPE=$(SELECTION_METRICS_TYPE) \
 		SELECTION_METRICS_THRESHOLD=$(SELECTION_METRICS_THRESHOLD) \
-        MAX_LOSS=$(MAX_LOSS) \
         "ML_PARAMS_FOR_UNLABELED=mc --loss_function logistic --passes 1" \
         DELIBLE=$(DELIBLE) \
         LRC=$(LRC) \
