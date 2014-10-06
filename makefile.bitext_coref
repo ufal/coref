@@ -14,15 +14,15 @@ LANGUAGE=en
 
 ########### filtered out; see tmp/ml/run_2014-08-06_15-25-42.en.mono_all_featset/001.8f801ad5b1.featset/data/log/preproc.000.o* ######################
 
-EN_TEST_DATA=tmp/ml/run_2014-08-06_15-25-42.en.mono_all_featset/001.8f801ad5b1.featset/data/processed/dev.pcedt_bi.en.analysed.table
-EN_TRAIN_DATA=tmp/ml/run_2014-08-06_15-25-42.en.mono_all_featset/001.8f801ad5b1.featset/data/processed/train.pcedt_bi.en.analysed.table
-EN_UNLABELED_DATA=tmp/ml/run_2014-08-06_15-25-42.en.mono_all_featset/001.8f801ad5b1.featset/data/processed/train.czeng_0.en.analysed.part_*
+EN_TEST_DATA=tmp/ml/run_2014-08-06_23-15-34.en.mono_all_featset/001.8f801ad5b1.featset/data/processed/dev.pcedt_bi.en.analysed.table
+EN_TRAIN_DATA=tmp/ml/run_2014-08-06_23-15-34.en.mono_all_featset/001.8f801ad5b1.featset/data/processed/train.pcedt_bi.en.analysed.table
+EN_UNLABELED_DATA=tmp/ml/run_2014-08-06_23-15-34.en.mono_all_featset/001.8f801ad5b1.featset/data/processed/train.czeng_0.en.analysed.part_*
 
 ########### filtered out; see tmp/ml/run_2014-08-06_15-15-32.cs.mono_all_featset/001.4e224b442c.featset/data/log/preproc.001.o* ######################
 
-CS_TRAIN_DATA=tmp/ml/run_2014-08-06_15-15-32.cs.mono_all_featset/001.4e224b442c.featset/data/processed/train.pdt.cs.analysed.table
-CS_TEST_DATA=tmp/ml/run_2014-08-06_15-15-32.cs.mono_all_featset/001.4e224b442c.featset/data/processed/dev.pdt.cs.analysed.table
-CS_UNLABELED_DATA=tmp/ml/run_2014-08-06_15-15-32.cs.mono_all_featset/001.4e224b442c.featset/data/processed/train.czeng_0.cs.analysed.part_*
+CS_TRAIN_DATA=tmp/ml/run_2014-08-06_23-20-40.cs.mono_all_featset/001.4e224b442c.featset/data/processed/train.pdt.cs.analysed.table
+CS_TEST_DATA=tmp/ml/run_2014-08-06_23-20-40.cs.mono_all_featset/001.4e224b442c.featset/data/processed/dev.pdt.cs.analysed.table
+CS_UNLABELED_DATA=tmp/ml/run_2014-08-06_23-20-40.cs.mono_all_featset/001.4e224b442c.featset/data/processed/train.czeng_0.cs.analysed.part_*
 
 ifeq ($(LANGUAGE),en)
 TEST_DATA:=$(EN_TEST_DATA)
