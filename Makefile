@@ -172,17 +172,18 @@ $(TRAIN_TABLE_GOLD_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : data/${LANGUAGE}/${DA
 	#Util::Eval tnode=`cat scripts/copy_grams` selector=ref \
 
 CLEAN_DATA_SOURCE := $(shell echo $(DATA_SOURCE) | sed 's/_.*$$//')
-ifneq ($(CLEAN_DATA_SOURCE),czeng)
-GOLD_LINKS := A2T::StripCoref type=text selector=src T2T::CopyCorefFromAlignment type=text selector=ref Util::SetGlobal selector=src
+ifeq ($(CLEAN_DATA_SOURCE), czeng)
+UNLABELED_FLAG = labeled=0
 endif
 
 $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : $(ANALYSED_DIR)/$(ID_ANALYSED)/list
 	mkdir -p $(TRAIN_TABLE_ANALYSED_DIR)
-	-treex ${CLUSTER_FLAGS} -L${LANGUAGE} \
+	-treex ${CLUSTER_FLAGS} \
 		Read::Treex from=@$(ANALYSED_DIR)/$(ID_ANALYSED)/list \
 		scenarios/$(CLEAN_DATA_SOURCE).$(LANGUAGE).before_data_table.scen \
 		$(DATA_TABLE_SCENARIO) \
-		Print::${LANGUAGE_UPPER}::TextPronCorefData $(COREF_PRINTER_PARAMS) anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} to='.' substitute='{^.*/(.*)}{tmp/data_table/$$1.$(DATA_SET).$(DATA_SOURCE).txt}'
+		Util::SetGlobal language=$(LANGUAGE) \
+		Print::${LANGUAGE_UPPER}::TextPronCorefData $(COREF_PRINTER_PARAMS) $(UNLABELED_FLAG) anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} to='.' substitute='{^.*/(.*)}{tmp/data_table/$$1.$(DATA_SET).$(DATA_SOURCE).txt}'
 	find tmp/data_table -path "*.$(DATA_SET).$(DATA_SOURCE).txt" | sort | xargs cat | gzip -c > $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
 	-rm $(DATA_DIR)/$(DATA_SET).$(DATA_SOURCE).$(LANGUAGE).$(ANOT).table
 	ln -s $(PWD)/$(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table $(DATA_DIR)/$(DATA_SET).$(DATA_SOURCE).$(LANGUAGE).$(ANOT).table
