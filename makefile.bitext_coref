@@ -12,18 +12,17 @@ LANGUAGE=en
 ##CS_UNLABELED_DATA=/home/mnovak/projects/czeng_coref/data/cs/train.czeng_0.cs.analysed.table
 #CS_UNLABELED_DATA=tmp/ml/data/train.czeng_0.cs.analysed.part_*
 
-########### filtered out; see tmp/ml/run_2014-07-23_00-10-16/001.8f801ad5b1.featset/data/log/preproc.000.o1460721 ######################
+########### filtered out; see tmp/ml/run_2014-08-06_15-25-42.en.mono_all_featset/001.8f801ad5b1.featset/data/log/preproc.000.o* ######################
 
-EN_TEST_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/dev.pcedt_bi.en.analysed.table
-EN_TRAIN_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/train.pcedt_bi.en.analysed.table
-EN_UNLABELED_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/train.czeng_0.en.analysed.part_*
-#UNLABELED_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/skuska.part_*
+EN_TEST_DATA=tmp/ml/run_2014-08-06_15-25-42.en.mono_all_featset/001.8f801ad5b1.featset/data/processed/dev.pcedt_bi.en.analysed.table
+EN_TRAIN_DATA=tmp/ml/run_2014-08-06_15-25-42.en.mono_all_featset/001.8f801ad5b1.featset/data/processed/train.pcedt_bi.en.analysed.table
+EN_UNLABELED_DATA=tmp/ml/run_2014-08-06_15-25-42.en.mono_all_featset/001.8f801ad5b1.featset/data/processed/train.czeng_0.en.analysed.part_*
 
-########### filtered out; see tmp/ml/run_2014-07-31_14-24-59/001.4e224b442c.featset/data/log/preproc.001.o1545951 ######################
+########### filtered out; see tmp/ml/run_2014-08-06_15-15-32.cs.mono_all_featset/001.4e224b442c.featset/data/log/preproc.001.o* ######################
 
-CS_TRAIN_DATA=tmp/ml/run_2014-07-31_14-24-59/001.4e224b442c.featset/data/processed/train.pdt.cs.analysed.table
-CS_TEST_DATA=tmp/ml/run_2014-07-31_14-24-59/001.4e224b442c.featset/data/processed/dev.pdt.cs.analysed.table
-CS_UNLABELED_DATA=tmp/ml/run_2014-07-31_14-24-59/001.4e224b442c.featset/data/processed/train.czeng_0.cs.analysed.part_*
+CS_TRAIN_DATA=tmp/ml/run_2014-08-06_15-15-32.cs.mono_all_featset/001.4e224b442c.featset/data/processed/train.pdt.cs.analysed.table
+CS_TEST_DATA=tmp/ml/run_2014-08-06_15-15-32.cs.mono_all_featset/001.4e224b442c.featset/data/processed/dev.pdt.cs.analysed.table
+CS_UNLABELED_DATA=tmp/ml/run_2014-08-06_15-15-32.cs.mono_all_featset/001.4e224b442c.featset/data/processed/train.czeng_0.cs.analysed.part_*
 
 ifeq ($(LANGUAGE),en)
 TEST_DATA:=$(EN_TEST_DATA)
@@ -44,6 +43,7 @@ ITER_COUNT=10
 MAX_LOSS=0
 DELIBLE=1
 
+#		UNLABELED_SPLIT_SIZE=300000 
 #        FEATSET_LIST=conf/$(LANGUAGE).featset_list 
 self_training :
 	$(ML_FRAMEWORK)/run.sh -f conf/params.ini \
@@ -53,7 +53,7 @@ self_training :
         TEST_DATA=$(TEST_DATA) \
         "UNLABELED_DATA=$(UNLABELED_DATA)" \
         FEATSET_LIST=conf/$(LANGUAGE).featset_list \
-        ML_METHOD_LIST=conf/ml_method.list \
+		ML_METHOD_LIST=conf/ml_method.list \
 		ITER_COUNT=$(ITER_COUNT) \
         MAX_LOSS=$(MAX_LOSS) \
         "ML_PARAMS_FOR_UNLABELED=mc --loss_function logistic --passes 1" \
@@ -61,10 +61,6 @@ self_training :
         LRC=$(LRC) \
         TMP_DIR=tmp/ml \
 		D="$(D)"
-
-EN_TEST_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/dev.pcedt_bi.en.analysed.table
-EN_TRAIN_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/train.pcedt_bi.en.analysed.table
-EN_UNLABELED_DATA=tmp/ml/run_2014-07-23_22-28-27/001.8f801ad5b1.featset/data/processed/train.czeng_0.en.analysed.part_*
 
 SPLIT=1
 
