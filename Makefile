@@ -278,11 +278,14 @@ DEV_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.ali-
 #EVAL_DATA=/home/mnovak/projects/czeng_coref/data/en/eval.pcedt_bi.en.analysed.ali-mgiza.table
 EVAL_DATA=/home/mnovak/projects/czeng_coref/data/en/eval.pcedt_bi.en.analysed.ali-sup.table
 
+DATA_LIST=TRAIN_DATA DEV_DATA EVAL_DATA
+TEST_DATA_LIST=$(DATA_LIST)
+
 train_test :
 	$(ML_FRAMEWORK_DIR)/run.sh -f conf/params.ini \
         EXPERIMENT_TYPE=train_test \
-        DATA_LIST="TRAIN_DATA DEV_DATA EVAL_DATA" \
-		TEST_DATA_LIST="TRAIN_DATA DEV_DATA EVAL_DATA" \
+        DATA_LIST="$(DATA_LIST)" \
+		TEST_DATA_LIST="$(TEST_DATA_LIST)" \
         TRAIN_DATA=$(TRAIN_DATA) \
         DEV_DATA=$(DEV_DATA) \
         EVAL_DATA=$(EVAL_DATA) \
