@@ -45,6 +45,7 @@ SELECTION_METRICS_TYPE=min_loss
 #SELECTION_METRICS_TYPE=avg_diff_loss
 SELECTION_METRICS_THRESHOLD=0
 DELIBLE=1
+POOL_SIZE=10
 
 #		UNLABELED_SPLIT_SIZE=300000 
 #        FEATSET_LIST=conf/$(LANGUAGE).featset_list 
@@ -61,6 +62,7 @@ self_training :
 		SELECTION_METRICS_THRESHOLD=$(SELECTION_METRICS_THRESHOLD) \
         "ML_PARAMS_FOR_UNLABELED=mc --loss_function logistic --passes 1" \
         DELIBLE=$(DELIBLE) \
+		POOL_SIZE=$(POOL_SIZE) \
         LRC=$(LRC) \
         TMP_DIR=tmp/ml \
 		D="$(D)"
