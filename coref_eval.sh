@@ -2,19 +2,25 @@
 
 #data_list=data/en/analysed/pcedt_bi/dev/0003/list
 data_list=$1
+category=$2
 
 coref_scorer=/net/work/people/mnovak/tools/x86_64/coref_scorer/v8.01/scorer.pl
 
 tmp_dir=tmp/coref_eval/`date +%Y-%m-%d_%H-%M-%S`_$$
 mkdir -p $tmp_dir
 
+if [ ! -z "$category" ]; then
+    specialized_block="Coref::PrepareSpecializedEval category=\"$category\""
+fi
+
 # extract key and response links
 mkdir -p $tmp_dir/key
 mkdir -p $tmp_dir/response
 #-p --jobs 100
-treex -p --jobs 100 -Lcs -Sref \
+treex -p --jobs 100 --priority 0 -Lcs -Sref \
     Read::Treex from=@$data_list \
     A2T::SetDocOrds \
+    $specialized_block \
     Coref::MarkMentionsForScorer layer=t \
     Write::SemEval2010 layer=t path="$tmp_dir/key" \
     Coref::RemoveLinks \
