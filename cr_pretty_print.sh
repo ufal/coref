@@ -5,7 +5,7 @@ data_list=$2
 d=$3
 
 d_no_space=`echo $d | sed 's/ /_/g'`
-last_n=`find tmp/cr_pretty_print -maxdepth 1 -mindepth 1 -path "*/run-*" -type d | cut -f3 -d'/' | cut -f1 -d'_' | cut -f2 -d'-' | sort | tail -n1` || 000
+last_n=`find tmp/cr_pretty_print -maxdepth 1 -mindepth 1 -path "*/run-*" -type d | cut -f3 -d'/' | cut -f1 -d'_' | cut -f2 -d'-' | sort | tail -n1` || 001
 next_n=`perl -e 'printf "%03d", $ARGV[0]+1' $last_n`
 
 tmp_dir=tmp/cr_pretty_print/run-$next_n'_'`date +%Y-%m-%d_%H-%M-%S`'_'$$'_'$d_no_space
