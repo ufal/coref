@@ -272,11 +272,14 @@ eval : $(RESOLVED_DIR)/$(ID_RESOLVED_COMBINED)/list
 ############################## USING ML FRAMEWORK ###########################
 
 #TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/en/train_00-18.pcedt_bi.en.analysed.ali-mgiza.table
-TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/en/train_00-18.pcedt_bi.en.analysed.ali-sup.table
+#TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/en/train_00-18.pcedt_bi.en.analysed.ali-sup.table
+TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/en/train_00-18.pcedt_bi.en.analysed.nonshared.table
 #DEV_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.ali-mgiza.table
-DEV_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.ali-sup.table
+#DEV_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.ali-sup.table
+DEV_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.nonshared.table
 #EVAL_DATA=/home/mnovak/projects/czeng_coref/data/en/eval.pcedt_bi.en.analysed.ali-mgiza.table
-EVAL_DATA=/home/mnovak/projects/czeng_coref/data/en/eval.pcedt_bi.en.analysed.ali-sup.table
+#EVAL_DATA=/home/mnovak/projects/czeng_coref/data/en/eval.pcedt_bi.en.analysed.ali-sup.table
+EVAL_DATA=/home/mnovak/projects/czeng_coref/data/en/eval.pcedt_bi.en.analysed.nonshared.table
 
 DATA_LIST=TRAIN_DATA DEV_DATA EVAL_DATA
 TEST_DATA_LIST=$(DATA_LIST)
@@ -294,6 +297,20 @@ train_test :
         LRC=$(LRC) \
         TMP_DIR=tmp/ml \
         D="$(D)"
+
+learning_curve :
+	$(ML_FRAMEWORK_DIR)/run.sh -f conf/params.ini \
+		EXPERIMENT_TYPE=learning_curve \
+		DATA_LIST="TRAIN_DATA DEV_DATA" \
+		TEST_DATA_LIST="TRAIN_DATA DEV_DATA" \
+		TRAIN_DATA=$(TRAIN_DATA) \
+		DEV_DATA=$(DEV_DATA) \
+		FEATSET_LIST=conf/$(LANGUAGE).featset_list \
+		ML_METHOD_LIST=conf/ml_method.list \
+		TRAIN_SAMPLE_SIZES="2 4 8 16 32 64 128 256 512 1024 2048 4096 8192 16384" \
+		LRC=$(LRC) \
+		TMP_DIR=tmp/ml \
+		D="$(D)"
 
 
 #############################################################################
