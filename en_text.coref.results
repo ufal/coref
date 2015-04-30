@@ -38,23 +38,23 @@ P: 37.79% (277 / 733)   R: 47.43% (277 / 584)   F: 42.07%
 08.02.2012 (r:8023)
 
 - A2T::EN::MarkTextCoref anaphor_as_candidate=1
-    - without A2T::RearrangeCorefLinks
+    - without Coref::RearrangeLinks
         - DEV+TRAIN_ANALYSED: P: 42.43% (832 / 1961)  R: 58.39% (832 / 1425)  F: 49.14%
         - this is most likely a consequence of the evaluation style - a success 
             whenever any node from a 'ref' chain is hit
-    - with A2T::RearrangeCorefLinks
+    - with Coref::RearrangeLinks
         - DEV+TRAIN_ANALYSED: P: 38.35% (752 / 1961)  R: 52.77% (752 / 1425)  F: 44.42%
 
 - A2T::EN::MarkReferentialIt + A2T::EN::MarkTextCoref anaphor_as_candidate=0
-    - without A2T::RearrangeCorefLinks
+    - without Coref::RearrangeLinks
         - DEV+TRAIN_ANALYSED: P: 41.98% (793 / 1889)    R: 55.65% (793 / 1425)  F: 47.86% 
-    - with A2T::RearrangeCorefLinks
+    - with Coref::RearrangeLinks
         - DEV+TRAIN_ANALYSED: P: 37.74% (713 / 1889)    R: 50.04% (713 / 1425)  F: 43.03%
 
 - A2T::EN::MarkReferentialIt + A2T::EN::MarkTextCoref anaphor_as_candidate=1
-    - without A2T::RearrangeCorefLinks
+    - without Coref::RearrangeLinks
         - DEV+TRAIN_ANALYSED: P: 42.84% (808 / 1886)    R: 56.70% (808 / 1425)  F: 48.81%
-    - with A2T::RearrangeCorefLinks
+    - with Coref::RearrangeLinks
         - DEV+TRAIN_ANALYSED: P: 39.08% (737 / 1886)    R: 51.72% (737 / 1425)  F: 44.52%
 
 

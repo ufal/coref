@@ -218,7 +218,7 @@ resolve_new:
 resolve: $(RESOLVED_DIR)/$(ID_RESOLVED_COMBINED)/list
 
 #-------------------- GOLD -------------------------------
-	#A2T::RearrangeCorefLinks retain_cataphora=1 \
+	#Coref::RearrangeLinks retain_cataphora=1 \
 
 $(RESOLVED_GOLD_DIR)/$(ID_RESOLVED_COMBINED)/list : data/${LANGUAGE}/${DATA_SET}.${DATA_SOURCE}.gold.list
 	mkdir -p $(RESOLVED_GOLD_DIR)/$(ID_RESOLVED_COMBINED)
@@ -241,7 +241,7 @@ $(RESOLVED_GOLD_DIR)/$(ID_RESOLVED_COMBINED)/list : data/${LANGUAGE}/${DATA_SET}
 	echo $(ID_RESOLVED) > $(RESOLVED_GOLD_DIR)/last_id
 
 #-------------------- ANALYSED -------------------------------
-	#A2T::RearrangeCorefLinks retain_cataphora=1 \
+	#Coref::RearrangeLinks retain_cataphora=1 \
 	#Util::Eval tnode=`cat scripts/copy_grams` selector=ref \
 
 		#model_path=data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT} \
@@ -302,7 +302,7 @@ sort_coref_chains:
 	treex -Lcs -Ssrc \
 	Read::PDT from=@data/cs/one.data.list schema_dir=/net/work/people/mnovak/schemas \
 	A2T::SetDocOrds \
-	A2T::RearrangeCorefLinks retain_cataphora=1 \
+	Coref::RearrangeLinks retain_cataphora=1 \
 	Write::Treex to=sorted_chains.treex
 
 suggest_breaks:
