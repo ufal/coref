@@ -79,7 +79,7 @@ JOBS_NUM = 50
 
 DATA_SET_PREFIX := $(shell echo ${DATA_SET} | cut -d'_' -f1)
 ifeq ($(DATA_SET_PREFIX), train)
-JOBS_NUM = 200
+JOBS_NUM = 100
 endif
 
 ifeq (${LANGUAGE}, en)
