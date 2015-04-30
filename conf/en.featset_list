@@ -121,6 +121,6 @@ __SELF__
 #aligned_all-charniak
 
 mono_all
-aligned_all
-aligned_coref+mono_all
-aligned_all+coref+mono_all
+#aligned_all
+#aligned_coref+mono_all
+#aligned_all+coref+mono_all
