@@ -1,4 +1,4 @@
-# orig_linh : all features as proposed by Linh (perceptron learner)
+# orig_linh-lexical : all features as proposed by Linh (perceptron learner) - lexical features
 __SELF__ 
        c_sent_dist        c_clause_dist         c_file_deepord_dist
        c_cand_ord         c_anaph_sentord
@@ -22,8 +22,7 @@ __SELF__
        b_cand_coord       b_app_in_coord
        c_cand_epar_fun    c_anaph_epar_fun      b_epar_fun_agree          c_join_epar_fun
        c_cand_epar_sempos c_anaph_epar_sempos   b_epar_sempos_agree       c_join_epar_sempos
-                                                b_epar_lemma_agree        c_join_epar_lemma
-                                                                          c_join_clemma_aeparlemma
+                                                b_epar_lemma_agree
        c_cand_tfa         c_anaph_tfa           b_tfa_agree               c_join_tfa
        b_sibl             b_coll                r_cnk_coll
        r_cand_freq                            
@@ -32,8 +31,14 @@ __SELF__
        cand_ewn_class
 
 # mono_all : all monolingual features
-@orig_linh
+@orig_linh-lexical
+    c_join_epar_lemma
+    c_join_clemma_aeparlemma
+
+# mono_all-lexical : all monolingual features - lexical features
+@orig_linh-lexical
 
 <<<EXPERIMENTS>>>
 
 mono_all
+mono_all-lexical
