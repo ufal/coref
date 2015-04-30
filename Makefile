@@ -228,7 +228,7 @@ $(RESOLVED_GOLD_DIR)/$(ID_RESOLVED_COMBINED)/list : data/${LANGUAGE}/${DATA_SET}
 	Util::SetGlobal selector=src \
 	${PREPROC_BLOCKS} \
 	T2T::CopyTtree source_selector=src selector=ref \
-	A2T::StripCoref type=text selector=src \
+	Coref::RemoveLinks type=text selector=src \
 	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
 	T2T::SetClauseNumber \
 	A2T::SetDocOrds \
@@ -315,7 +315,7 @@ eval_gram:
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
 	Read::PDT from=@data/${LANGUAGE}/${DATA_SET}.data.list schema_dir=/net/work/people/mnovak/schemas \
 	T2T::CopyTtree source_selector=src selector=ref \
-	A2T::StripCoref type=gram selector=src \
+	Coref::RemoveLinks type=gram selector=src \
 	A2T::${LANGUAGE_UPPER}::SetFormeme \
 	A2T::${LANGUAGE_UPPER}::MarkClauseHeads \
 	A2T::${LANGUAGE_UPPER}::MarkReflpronCoref \
