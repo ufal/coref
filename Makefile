@@ -99,7 +99,7 @@ endif
 
 LRC=1
 ifeq ($(LRC), 1)
-CLUSTER_FLAGS = -p --qsub '-hard -l mem_free=2G -l act_mem_free=2G -l h_vmem=2G' --jobs ${JOBS_NUM}
+CLUSTER_FLAGS = -p --qsub '-hard -l mem_free=2G -l act_mem_free=2G -l h_vmem=2G' --jobs ${JOBS_NUM} --priority -100
 endif
 
 
@@ -246,13 +246,17 @@ $(RESOLVED_GOLD_DIR)/$(ID_RESOLVED_COMBINED)/list : data/${LANGUAGE}/${DATA_SET}
 
 		#model_path=data/models/coreference/${LANGUAGE_UPPER}/perceptron/text.perspron.${ANOT} \
 
+ifdef MODEL_PATH
+MODEL_FLAG=model_path=$(MODEL_PATH)
+endif
+
 $(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED)/list : $(ANALYSED_DIR)/$(ID_ANALYSED)/list
 	echo $(RESOLVED_DIR)/$(ID_RESOLVED_COMBINED)/list
 	mkdir -p $(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED)
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
 	Read::Treex from=@$(ANALYSED_DIR)/$(ID_ANALYSED)/list \
 	scenarios/$(CLEAN_DATA_SOURCE).$(LANGUAGE).before_data_table.scen \
-	A2T::${LANGUAGE_UPPER}::MarkTextPronCoref anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} diagnostics=1 \
+	A2T::${LANGUAGE_UPPER}::MarkTextPronCoref $(MODEL_FLAG) anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} diagnostics=1 \
 	Write::Treex clobber=1 storable=1 path=$(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED)
 	find $(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED) -name "*.streex" | sed 's/^.*\///' | sort > $(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED)/list
 	perl -e 'print join("\t", "$(ID_RESOLVED_COMBINED)", "$(DATE)", "ANAPHOR_AS_CANDIDATE=$(ANAPHOR_AS_CANDIDATE)", "$(TMT_VERSION)", '\''${DESC}'\''); print "\n";' >> $(RESOLVED_ANALYSED_DIR)/history
