@@ -7,8 +7,8 @@ LANGUAGE=en
 #EN_TEST_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.table
 #EN_UNLABELED_DATA=tmp/ml/data/train.czeng_0.en.analysed.part_*
 
-#CS_TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/cs/train.pdt.cs.analysed.table
-#CS_TEST_DATA=/home/mnovak/projects/czeng_coref/data/cs/dev.pdt.cs.analysed.table
+CS_TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/cs/train.pdt.cs.analysed.table
+CS_TEST_DATA=/home/mnovak/projects/czeng_coref/data/cs/dev.pdt.cs.analysed.table
 ##CS_UNLABELED_DATA=/home/mnovak/projects/czeng_coref/data/cs/train.czeng_0.cs.analysed.table
 #CS_UNLABELED_DATA=tmp/ml/data/train.czeng_0.cs.analysed.part_*
 
@@ -20,9 +20,9 @@ EN_UNLABELED_DATA=tmp/ml/run_2014-08-06_23-15-34.en.mono_all_featset/001.8f801ad
 
 ########### filtered out; see tmp/ml/run_2014-08-06_15-15-32.cs.mono_all_featset/001.4e224b442c.featset/data/log/preproc.001.o* ######################
 
-CS_TRAIN_DATA=tmp/ml/run_2014-08-06_23-20-40.cs.mono_all_featset/001.4e224b442c.featset/data/processed/train.pdt.cs.analysed.table
-CS_TEST_DATA=tmp/ml/run_2014-08-06_23-20-40.cs.mono_all_featset/001.4e224b442c.featset/data/processed/dev.pdt.cs.analysed.table
-CS_UNLABELED_DATA=tmp/ml/run_2014-08-06_23-20-40.cs.mono_all_featset/001.4e224b442c.featset/data/processed/train.czeng_0.cs.analysed.part_*
+#CS_TRAIN_DATA=tmp/ml/run_2014-08-06_23-20-40.cs.mono_all_featset/001.4e224b442c.featset/data/processed/train.pdt.cs.analysed.table
+#CS_TEST_DATA=tmp/ml/run_2014-08-06_23-20-40.cs.mono_all_featset/001.4e224b442c.featset/data/processed/dev.pdt.cs.analysed.table
+#CS_UNLABELED_DATA=tmp/ml/run_2014-08-06_23-20-40.cs.mono_all_featset/001.4e224b442c.featset/data/processed/train.czeng_0.cs.analysed.part_*
 
 ifeq ($(LANGUAGE),en)
 TEST_DATA:=$(EN_TEST_DATA)
@@ -38,6 +38,19 @@ lang_test :
 	@echo "$(TEST_DATA)"
 	@echo "$(TRAIN_DATA)"
 	@echo "$(UNLABELED_DATA)"
+
+train_test :
+	$(ML_FRAMEWORK_DIR)/run.sh -f conf/params.ini \
+        EXPERIMENT_TYPE=train_test \
+        DATA_LIST="TRAIN_DATA TEST_DATA" \
+		TEST_DATA_LIST="TRAIN_DATA TEST_DATA" \
+        TRAIN_DATA=$(TRAIN_DATA) \
+        TEST_DATA=$(TEST_DATA) \
+        ML_METHOD_LIST=conf/ml_method.list \
+        FEATSET_LIST=conf/$(LANGUAGE).featset_list \
+        LRC=$(LRC) \
+        TMP_DIR=tmp/ml \
+        D="$(D)"
 
 ITER_COUNT=10
 SELECTION_METRICS_TYPE=min_loss
@@ -82,9 +95,9 @@ co_training_ali :
 		ITER_COUNT=$(ITER_COUNT) \
 		SELECTION_METRICS_TYPE=$(SELECTION_METRICS_TYPE) \
 		SELECTION_METRICS_THRESHOLD=$(SELECTION_METRICS_THRESHOLD) \
-        ML_PARAMS_FOR_UNLABELED="mc --loss_function logistic --passes 1" \
         DELIBLE=$(DELIBLE) \
 		SPLIT=$(SPLIT) \
+		POOL_SIZE=$(POOL_SIZE) \
         LRC=$(LRC) \
         TMP_DIR=tmp/ml \
 		D="$(D)"
