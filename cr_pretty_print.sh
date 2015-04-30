@@ -10,9 +10,9 @@ mkdir -p $tmp_dir
 #mkdir -p $tmp_dir/trees
 
 mkdir -p $tmp_dir/parts
-treex -L$language -Sref \
+treex -p --jobs 50 -L$language -Sref \
     Read::Treex from=@$data_list \
-    Util::Eval tnode='my @antes = $tnode->get_coref_nodes; $_->wild->{coref_diag}{key_ante_for}{$tnode->id} = 1 foreach (@antes)' \
+    Util::Eval tnode='my @antes = $tnode->get_coref_chain; $_->wild->{coref_diag}{key_ante_for}{$tnode->id} = 1 foreach (@antes)' \
     Coref::RemoveLinks \
     T2T::CopyCorefFromAlignment selector=src \
     Util::Eval tnode='my @antes = $tnode->get_coref_nodes; $_->wild->{coref_diag}{sys_ante_for}{$tnode->id} = 1 foreach (@antes)' \
