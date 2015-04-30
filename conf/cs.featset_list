@@ -30,6 +30,10 @@ __SELF__
        
        cand_ewn_class
 
+# gender_indicators : an indocator for all genders for both the cand and the anaph
+c_anaph_gen_anim    c_anaph_gen_inan    c_anaph_gen_fem     c_anaph_gen_neut
+c_cand_gen_anim     c_cand_gen_inan     c_cand_gen_fem      c_cand_gen_neut
+
 # mono_all : all monolingual features
 @orig_linh-lexical
     c_join_epar_lemma
@@ -38,7 +42,15 @@ __SELF__
 # mono_all-lexical : all monolingual features - lexical features
 @orig_linh-lexical
 
+# mono_all+gen_ind : all monolingual features + gender indicators
+@mono_all   @gender_indicators
+
+# mono_all-lexical+gen_ind : all monolingual features -lexical features + gender indicators
+@mono_all-lexical   @gender_indicators
+
 <<<EXPERIMENTS>>>
 
 mono_all
 mono_all-lexical
+mono_all+gen_ind
+mono_all-lexical+gen_ind
