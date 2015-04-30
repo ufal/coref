@@ -6,3 +6,4 @@ A2T::EN::MarkReferentialIt resolver_type=nada
 # Czech side
 Util::SetGlobal language=cs
 A2T::SetDocOrds
+Coref::CS::SetMultiGender

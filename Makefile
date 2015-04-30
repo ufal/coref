@@ -181,7 +181,6 @@ $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table : $(ANALYSED_DIR)/$
 	-treex ${CLUSTER_FLAGS} --workdir "tmp/treex_runs/run_{NNN}-{XXXX}" \
 		Read::Treex from=@$(ANALYSED_DIR)/$(ID_ANALYSED)/list \
 		scenarios/$(CLEAN_DATA_SOURCE).$(LANGUAGE).before_data_table.scen \
-		$(DATA_TABLE_SCENARIO) \
 		Util::SetGlobal language=$(LANGUAGE) \
 		Print::${LANGUAGE_UPPER}::TextPronCorefData $(COREF_PRINTER_PARAMS) $(UNLABELED_FLAG) anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} to='.' substitute='{^.*/(.*)}{tmp/data_table/$$1.$(DATA_SET).$(DATA_SOURCE).$(LANGUAGE).txt}'
 	find tmp/data_table -path "*.$(DATA_SET).$(DATA_SOURCE).$(LANGUAGE).txt" | sort | xargs cat | gzip -c > $(TRAIN_TABLE_ANALYSED_DIR)/$(ID_TRAIN_TABLE_COMBINED).table
@@ -251,7 +250,7 @@ $(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED)/list : $(ANALYSED_DIR)/$(ID_ANA
 	mkdir -p $(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED)
 	treex ${CLUSTER_FLAGS} -L${LANGUAGE} -Ssrc \
 	Read::Treex from=@$(ANALYSED_DIR)/$(ID_ANALYSED)/list \
-	${IS_REFER_BLOCK} \
+	scenarios/$(CLEAN_DATA_SOURCE).$(LANGUAGE).before_data_table.scen \
 	A2T::${LANGUAGE_UPPER}::MarkTextPronCoref anaphor_as_candidate=${ANAPHOR_AS_CANDIDATE} diagnostics=1 \
 	Write::Treex clobber=1 storable=1 path=$(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED)
 	find $(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED) -name "*.streex" | sed 's/^.*\///' | sort > $(RESOLVED_ANALYSED_DIR)/$(ID_RESOLVED_COMBINED)/list
