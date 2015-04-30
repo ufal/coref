@@ -38,7 +38,7 @@ align_c_sent_dist        align_c_clause_dist         align_c_file_deepord_dist
 #    b_cand_akt b_anaph_akt b_akt_agree 
 #    b_cand_subj b_anaph_subj b_subj_agree
 
-# orig_linh : all features (except for ewn_classes)
+# orig_linh-lexical : all features (except for ewn_classes) - lexical
 __SELF__
        c_sent_dist        c_clause_dist         c_file_deepord_dist
        c_cand_ord         c_anaph_sentord
@@ -59,13 +59,17 @@ __SELF__
        c_cand_epar_fun    c_anaph_epar_fun      b_epar_fun_agree          c_join_epar_fun
        c_cand_epar_fmm    c_anaph_epar_fmm      b_epar_fmm_agree          c_join_epar_fmm
        c_cand_epar_sempos c_anaph_epar_sempos   b_epar_sempos_agree       c_join_epar_sempos
-                                                b_epar_lemma_agree        c_join_epar_lemma
-                                                                          c_join_clemma_aeparlemma
+                                                b_epar_lemma_agree        
        
        b_sibl             b_coll                
        r_cand_freq                            
        b_cand_pers 
-       
+
+# orig_linh : all features (except for ewn_classes)
+@orig_linh-lexical
+       c_join_epar_lemma
+       c_join_clemma_aeparlemma
+
 # orig_linh+charniak : all features + CharniakElsner2009
 @orig_linh
        c_cand_loc_buck    c_anaph_loc_buck
@@ -84,6 +88,14 @@ __SELF__
 @orig_linh+charniak+ne
        cand_ewn_class
 
+# orig_linh-lexical+charniak+ne+ewn : all features - lexical + CharniakElsner2009 + NE + WordNet classes
+@orig_linh-lexical
+       c_cand_loc_buck    c_anaph_loc_buck
+       c_cand_type        c_anaph_type
+       c_cand_synttype    
+       c_cand_ne_cat      c_cand_ne_subcat
+       cand_ewn_class
+       
 # orig_linh+ne+ewn : all features + NE + WordNet classes
 @orig_linh+ne
        cand_ewn_class
@@ -94,6 +106,10 @@ __SELF__
 
 # mono_all-charniak : all features + NE + WordNet classes + is_referential(NADA_0.5)
 @orig_linh+ne+ewn
+       b_anaph_referential
+
+# mono_all-lexical : all features - lexical + CharniakElsner2009 + NE + WordNet classes + is_referential(NADA_0.5)
+@orig_linh-lexical+charniak+ne+ewn
        b_anaph_referential
 
 # aligned_all : mono_all + feature from alignment
@@ -121,6 +137,7 @@ __SELF__
 #aligned_all-charniak
 
 mono_all
+mono_all-lexical
 #aligned_all
 #aligned_coref+mono_all
 #aligned_all+coref+mono_all
