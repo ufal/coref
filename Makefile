@@ -99,7 +99,7 @@ endif
 
 LRC=1
 ifeq ($(LRC), 1)
-CLUSTER_FLAGS = -p --qsub '-hard -l mem_free=2G -l act_mem_free=2G -l h_vmem=2G' --jobs ${JOBS_NUM} --priority -100
+CLUSTER_FLAGS = -p --mem 5G --jobs ${JOBS_NUM} --priority 0
 endif
 
 
