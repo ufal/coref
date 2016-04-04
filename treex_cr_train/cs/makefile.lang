@@ -1,0 +1,7 @@
+LANGUAGE=cs
+
+DATA_NAME=pdt
+
+TRAIN_DATA=${CZENG_COREF_DIR}/data/cs/analysed/pdt/train/0002/list
+DEV_DATA=${CZENG_COREF_DIR}/data/cs/analysed/pdt/dev/0002/list
+EVAL_DATA=${CZENG_COREF_DIR}/data/cs/analysed/pdt/eval/0002/list
