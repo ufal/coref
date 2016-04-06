@@ -1,0 +1,26 @@
+SHELL=/bin/bash
+
+LRC=1
+ifeq ($(LRC),1)
+LRC_FLAG=-p --jobs 50
+endif
+
+RUNS_DIR=tmp/runs
+
+DATE := $(shell date +%Y-%m-%d_%H-%M-%S)
+LAST_TRY := $(shell ls -d -t $(RUNS_DIR)/[0-9]* 2>/dev/null | head -n 1)
+NEW_NUM  := $(shell perl -e '$$m=0; for(<$(RUNS_DIR)/*>){/\/(\d+)_/ and $$1 > $$m and $$m=$$1;} printf "%03d", $$m+1;')
+NEW_TRY  := $(RUNS_DIR)/$(NEW_NUM)_$(DATE)
+
+
+resolve-dev : DATA=$(DEV_DATA)
+resolve-eval : DATA=$(EVAL_DATA)
+resolve : DATA=$(DEV_DATA)
+resolve-dev resolve-eval resolve :
+	mkdir -p $(NEW_TRY)/treexfiles
+	echo "$(D)" > $(NEW_TRY)/description
+	treex $(LRC_FLAG) -L$(LANGUAGE) -Ssrc --workdir=$(NEW_TRY) \
+		Read::Treex from=@$(DATA) \
+		Coref::RemoveLinks type=all \
+		Scen::Coref language=$(LANGUAGE) modules=$(COREF_MODULES) \
+		Write::Treex path=$(NEW_TRY)/treexfiles
