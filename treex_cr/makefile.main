@@ -19,8 +19,21 @@ resolve : DATA=$(DEV_DATA)
 resolve-dev resolve-eval resolve :
 	mkdir -p $(NEW_TRY)/treexfiles
 	echo "$(D)" > $(NEW_TRY)/description
-	treex $(LRC_FLAG) -L$(LANGUAGE) -Ssrc --workdir=$(NEW_TRY) \
+	treex $(LRC_FLAG) -L$(LANGUAGE) -Ssrc --workdir=$(NEW_TRY)/runs.resolve \
 		Read::Treex from=@$(DATA) \
 		Coref::RemoveLinks type=all \
 		Scen::Coref language=$(LANGUAGE) modules=$(COREF_MODULES) \
 		Write::Treex path=$(NEW_TRY)/treexfiles
+
+eval :
+	export DESCRIPTION=`cat $(NEW_TRY)/description`; \
+	treex $(LRC_FLAG) -L$(LANGUAGE) -Sref --workdir=$(NEW_TRY)/runs.simple_eval \
+		Read::Treex from='!$(NEW_TRY)/treexfiles/*.streex' \
+		Coref::PrepareSpecializedEval category=$(ANAPH_TYPE) \
+		Coref::SimpleEval \
+	> $(NEW_TRY)/results.simple
+	cat $(NEW_TRY)/simple_eval.res | ../../bin/eval.pl > $(NEW_TRY)/eval.simple
+
+eval-%:
+	export new_try=`ls -d $(RUNS_DIR)/$*_*` && \
+	make $(@:-$*=) NEW_NUM=$* NEW_TRY=$$new_try DATE=`echo $$new_try | cut -d_ -f2-`

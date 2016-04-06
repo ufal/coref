@@ -7,8 +7,17 @@ LANGUAGE=en
 #EN_TEST_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.table
 #EN_UNLABELED_DATA=tmp/ml/data/train.czeng_0.en.analysed.part_*
 
-CS_TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/cs/train.pdt.cs.analysed.table
-CS_TEST_DATA=/home/mnovak/projects/czeng_coref/data/cs/dev.pdt.cs.analysed.table
+#CS_TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/cs/train.pdt.cs.analysed.table
+#CS_TEST_DATA=/home/mnovak/projects/czeng_coref/data/cs/dev.pdt.cs.analysed.table
+
+# single-valued genders 
+#CS_TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/cs/train_table/analysed/pdt/train/0001.0025.table
+#CS_TEST_DATA=/home/mnovak/projects/czeng_coref/data/cs/train_table/analysed/pdt/dev/0001.0016.table
+
+# multi-valued genders 
+CS_TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/cs/train_table/analysed/pdt/train/0001.0026.table
+CS_TEST_DATA=/home/mnovak/projects/czeng_coref/data/cs/train_table/analysed/pdt/dev/0001.0017.table
+
 ##CS_UNLABELED_DATA=/home/mnovak/projects/czeng_coref/data/cs/train.czeng_0.cs.analysed.table
 #CS_UNLABELED_DATA=tmp/ml/data/train.czeng_0.cs.analysed.part_*
 

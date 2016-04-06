@@ -277,13 +277,17 @@ eval : $(RESOLVED_DIR)/$(ID_RESOLVED_COMBINED)/list
 
 #TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/en/train_00-18.pcedt_bi.en.analysed.ali-mgiza.table
 #TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/en/train_00-18.pcedt_bi.en.analysed.ali-sup.table
-TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/en/train_00-18.pcedt_bi.en.analysed.nonshared.table
+#TRAIN_DATA=/home/mnovak/projects/czeng_coref/data/en/train_00-18.pcedt_bi.en.analysed.nonshared.table
 #DEV_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.ali-mgiza.table
 #DEV_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.ali-sup.table
-DEV_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.nonshared.table
+#DEV_DATA=/home/mnovak/projects/czeng_coref/data/en/dev.pcedt_bi.en.analysed.nonshared.table
 #EVAL_DATA=/home/mnovak/projects/czeng_coref/data/en/eval.pcedt_bi.en.analysed.ali-mgiza.table
 #EVAL_DATA=/home/mnovak/projects/czeng_coref/data/en/eval.pcedt_bi.en.analysed.ali-sup.table
-EVAL_DATA=/home/mnovak/projects/czeng_coref/data/en/eval.pcedt_bi.en.analysed.nonshared.table
+#EVAL_DATA=/home/mnovak/projects/czeng_coref/data/en/eval.pcedt_bi.en.analysed.nonshared.table
+
+TRAIN_DATA=$(abspath $(DATA_DIR))/train.$(DATA_SOURCE).$(LANGUAGE).$(ANOT).table
+DEV_DATA=$(abspath $(DATA_DIR))/dev.$(DATA_SOURCE).$(LANGUAGE).$(ANOT).table
+EVAL_DATA=$(abspath $(DATA_DIR))/eval.$(DATA_SOURCE).$(LANGUAGE).$(ANOT).table
 
 DATA_LIST=TRAIN_DATA DEV_DATA EVAL_DATA
 TEST_DATA_LIST=$(DATA_LIST)
