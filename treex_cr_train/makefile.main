@@ -14,6 +14,7 @@ eval.$(DATA_NAME).table.gz : DATA=$(EVAL_DATA)
 $(ALL_DATA_TABLES) :
 	treex $(LRC_FLAG) -L$(LANGUAGE) -Ssrc \
 		Read::Treex from=@$(DATA) \
+		Coref::RemoveLinks type=all \
 		Scen::Coref language=$(LANGUAGE) modules=$(COREF_MODULES) \
 		$(COREF_PRINTER) | \
 	gzip -c > $@
@@ -25,7 +26,7 @@ TEST_DATA_LIST=$(DATA_LIST)
 ML_METHOD_LIST=../../ml_method.conf
 
 train_test : $(ALL_DATA_TABLES)
-	$(ML_FRAMEWORK_DIR)/run.sh -f conf/params.ini \
+	$(ML_FRAMEWORK_DIR)/run.sh -f ../../ml_params.ini \
         EXPERIMENT_TYPE=train_test \
         DATA_LIST="$(DATA_LIST)" \
 		TEST_DATA_LIST="$(TEST_DATA_LIST)" \
