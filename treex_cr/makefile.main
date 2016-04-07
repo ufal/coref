@@ -17,23 +17,41 @@ resolve-dev : DATA=$(DEV_DATA)
 resolve-eval : DATA=$(EVAL_DATA)
 resolve : DATA=$(DEV_DATA)
 resolve-dev resolve-eval resolve :
-	mkdir -p $(NEW_TRY)/treexfiles
+	mkdir -p $(NEW_TRY)/resolve/treexfiles
 	echo "$(D)" > $(NEW_TRY)/description
-	treex $(LRC_FLAG) -L$(LANGUAGE) -Ssrc --workdir=$(NEW_TRY)/runs.resolve \
+	treex $(LRC_FLAG) -L$(LANGUAGE) -Ssrc --workdir=$(NEW_TRY)/resolve/runs \
 		Read::Treex from=@$(DATA) \
 		Coref::RemoveLinks type=all \
 		Scen::Coref language=$(LANGUAGE) modules=$(COREF_MODULES) \
-		Write::Treex path=$(NEW_TRY)/treexfiles
+		Write::Treex path=$(NEW_TRY)/resolve/treexfiles
 
-eval :
-	export DESCRIPTION=`cat $(NEW_TRY)/description`; \
+eval : ../../bin/conll_scorer/scorer.pl
 	treex $(LRC_FLAG) -L$(LANGUAGE) -Sref --workdir=$(NEW_TRY)/runs.simple_eval \
-		Read::Treex from='!$(NEW_TRY)/treexfiles/*.streex' \
+		Read::Treex from='!$(NEW_TRY)/resolve/treexfiles/*.streex' \
+    	A2T::SetDocOrds \
 		Coref::PrepareSpecializedEval category=$(ANAPH_TYPE) \
-		Coref::SimpleEval \
-	> $(NEW_TRY)/results.simple
-	cat $(NEW_TRY)/simple_eval.res | ../../bin/eval.pl > $(NEW_TRY)/eval.simple
+		Coref::SimpleEval path="$(NEW_TRY)/eval/results.simple" \
+		Coref::MarkMentionsForScorer layer=t \
+		Write::SemEval2010 layer=t path="$(NEW_TRY)/eval/results.semeval.key" \
+		Coref::RemoveLinks \
+		T2T::CopyCorefFromAlignment selector=src \
+		Coref::MarkMentionsForScorer layer=t \
+		Write::SemEval2010 layer=t path="$(NEW_TRY)/eval/results.semeval.response"
+	find $(NEW_TRY)/eval/results.simple -name '*.tsv' | sort | xargs cat > $(NEW_TRY)/eval/results.simple.tsv
+	find $(NEW_TRY)/eval/results.semeval.key -name '*.conll' | sort | xargs cat > $(NEW_TRY)/eval/results.semeval.key.conll
+	find $(NEW_TRY)/eval/results.semeval.response -name '*.conll' | sort | xargs cat > $(NEW_TRY)/eval/results.semeval.response.conll
+	cat $(NEW_TRY)/eval/results.simple.tsv | ../../bin/eval.pl > $(NEW_TRY)/eval/eval.simple.txt
+	$< all $(NEW_TRY)/eval/results.semeval.key.conll $(NEW_TRY)/eval/results.semeval.response.conll none > $(NEW_TRY)/eval/eval.conll.txt
+	
+#export DESCRIPTION=`cat $(NEW_TRY)/description`; \
 
 eval-%:
 	export new_try=`ls -d $(RUNS_DIR)/$*_*` && \
 	make $(@:-$*=) NEW_NUM=$* NEW_TRY=$$new_try DATE=`echo $$new_try | cut -d_ -f2-`
+
+../../bin/conll_scorer/scorer.pl :
+	wget -O ../../bin/scorer.tar.gz http://conll.cemantix.org/download/reference-coreference-scorers.v8.01.tar.gz
+	tar -C ../../bin -xvvzf ../../bin/scorer.tar.gz
+	mv ../../bin/reference-coreference-scorers/v8.01/ ../../bin/conll_scorer
+	rm -rf ../../bin/reference-coreference-scorers/
+	rm ../../bin/scorer.tar.gz
