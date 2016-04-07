@@ -45,6 +45,8 @@ eval : ../../bin/conll_scorer/scorer.pl
 	
 #export DESCRIPTION=`cat $(NEW_TRY)/description`; \
 
+#    My::RemoveCoreferenceLoops
+
 eval-%:
 	export new_try=`ls -d $(RUNS_DIR)/$*_*` && \
 	make $(@:-$*=) NEW_NUM=$* NEW_TRY=$$new_try DATE=`echo $$new_try | cut -d_ -f2-`
