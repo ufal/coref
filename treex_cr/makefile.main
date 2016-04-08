@@ -23,6 +23,7 @@ resolve-dev resolve-eval resolve :
 		Read::Treex from=@$(DATA) \
 		Coref::RemoveLinks type=all \
 		Scen::Coref language=$(LANGUAGE) modules=$(COREF_MODULES) \
+		$(MAIN_COREF_BLOCK) diagnostics=1 \
 		Write::Treex path=$(NEW_TRY)/resolve/treexfiles
 
 eval : ../../bin/conll_scorer/scorer.pl
@@ -42,12 +43,15 @@ eval : ../../bin/conll_scorer/scorer.pl
 	find $(NEW_TRY)/eval/results.semeval.response -name '*.conll' | sort | xargs cat > $(NEW_TRY)/eval/results.semeval.response.conll
 	cat $(NEW_TRY)/eval/results.simple.tsv | ../../bin/eval.pl > $(NEW_TRY)/eval/eval.simple.txt
 	$< all $(NEW_TRY)/eval/results.semeval.key.conll $(NEW_TRY)/eval/results.semeval.response.conll none > $(NEW_TRY)/eval/eval.conll.txt
+
+pretty_print :
+	../../bin/cr_pretty_print.sh $(LANGUAGE) '!$(NEW_TRY)/resolve/treexfiles/*.streex' $(NEW_TRY)/pretty_print
 	
 #export DESCRIPTION=`cat $(NEW_TRY)/description`; \
 
 #    My::RemoveCoreferenceLoops
 
-eval-%:
+eval-% pretty_print-%:
 	export new_try=`ls -d $(RUNS_DIR)/$*_*` && \
 	make $(@:-$*=) NEW_NUM=$* NEW_TRY=$$new_try DATE=`echo $$new_try | cut -d_ -f2-`
 
