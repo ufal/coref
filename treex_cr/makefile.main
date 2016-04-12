@@ -27,22 +27,32 @@ resolve-dev resolve-eval resolve :
 		Write::Treex path=$(NEW_TRY)/resolve/treexfiles
 
 eval : ../../bin/conll_scorer/scorer.pl
-	treex $(LRC_FLAG) -L$(LANGUAGE) -Sref --workdir=$(NEW_TRY)/runs.simple_eval \
+	mkdir -p $(NEW_TRY)/eval/results.simple
+	treex $(LRC_FLAG) -L$(LANGUAGE) -Sref --workdir=$(NEW_TRY)/eval/runs \
 		Read::Treex from='!$(NEW_TRY)/resolve/treexfiles/*.streex' \
-    	A2T::SetDocOrds \
-		Coref::PrepareSpecializedEval category=$(ANAPH_TYPE) \
-		Coref::SimpleEval path="$(NEW_TRY)/eval/results.simple" \
-		Coref::MarkMentionsForScorer layer=t \
-		Write::SemEval2010 layer=t path="$(NEW_TRY)/eval/results.semeval.key" \
-		Coref::RemoveLinks \
-		T2T::CopyCorefFromAlignment selector=src \
-		Coref::MarkMentionsForScorer layer=t \
-		Write::SemEval2010 layer=t path="$(NEW_TRY)/eval/results.semeval.response"
+		Coref::SimpleEval node_types="$(ANAPH_TYPE)" path="$(NEW_TRY)/eval/results.simple"
 	find $(NEW_TRY)/eval/results.simple -name '*.tsv' | sort | xargs cat > $(NEW_TRY)/eval/results.simple.tsv
-	find $(NEW_TRY)/eval/results.semeval.key -name '*.conll' | sort | xargs cat > $(NEW_TRY)/eval/results.semeval.key.conll
-	find $(NEW_TRY)/eval/results.semeval.response -name '*.conll' | sort | xargs cat > $(NEW_TRY)/eval/results.semeval.response.conll
-	cat $(NEW_TRY)/eval/results.simple.tsv | ../../bin/eval.pl > $(NEW_TRY)/eval/eval.simple.txt
-	$< all $(NEW_TRY)/eval/results.semeval.key.conll $(NEW_TRY)/eval/results.semeval.response.conll none > $(NEW_TRY)/eval/eval.conll.txt
+	cat $(NEW_TRY)/eval/results.simple.tsv | $(MLYN_DIR)/scripts/eval.pl --acc --prf > $(NEW_TRY)/eval/eval.simple.txt
+
+## Evaluation with the standard coreference measures as well
+## TODO: Coref::PrepareSpecializedEval must be fixed
+#eval : ../../bin/conll_scorer/scorer.pl
+#	treex $(LRC_FLAG) -L$(LANGUAGE) -Sref --workdir=$(NEW_TRY)/eval/runs \
+#		Read::Treex from='!$(NEW_TRY)/resolve/treexfiles/*.streex' \
+#    	A2T::SetDocOrds \
+#		Coref::PrepareSpecializedEval category=$(ANAPH_TYPE) \
+#		Coref::SimpleEval path="$(NEW_TRY)/eval/results.simple" \
+#		Coref::MarkMentionsForScorer layer=t \
+#		Write::SemEval2010 layer=t path="$(NEW_TRY)/eval/results.semeval.key" \
+#		Coref::RemoveLinks \
+#		T2T::CopyCorefFromAlignment selector=src \
+#		Coref::MarkMentionsForScorer layer=t \
+#		Write::SemEval2010 layer=t path="$(NEW_TRY)/eval/results.semeval.response"
+#	find $(NEW_TRY)/eval/results.simple -name '*.tsv' | sort | xargs cat > $(NEW_TRY)/eval/results.simple.tsv
+#	find $(NEW_TRY)/eval/results.semeval.key -name '*.conll' | sort | xargs cat > $(NEW_TRY)/eval/results.semeval.key.conll
+#	find $(NEW_TRY)/eval/results.semeval.response -name '*.conll' | sort | xargs cat > $(NEW_TRY)/eval/results.semeval.response.conll
+#	cat $(NEW_TRY)/eval/results.simple.tsv | ../../bin/eval.pl > $(NEW_TRY)/eval/eval.simple.txt
+#	$< all $(NEW_TRY)/eval/results.semeval.key.conll $(NEW_TRY)/eval/results.semeval.response.conll none > $(NEW_TRY)/eval/eval.conll.txt
 
 pretty_print :
 	../../bin/cr_pretty_print.sh $(LANGUAGE) '!$(NEW_TRY)/resolve/treexfiles/*.streex' $(NEW_TRY)/pretty_print
