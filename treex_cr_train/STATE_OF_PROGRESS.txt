@@ -11,7 +11,7 @@ treex git repository:
                   qtl; cd repo/translate/en-cs/news; make translate eval D="testing Coref::EN::PersPron::Resolve - en perspron CR refactored"
                     - testing Czech/English CR, if it produces the same results before and after the refactoring. See the branches 
                         "new_coref.before_large_refactoring.mt_test", "new_coref.en_persprons_refactored.mt_test", and "new_coref.cs_persprons_refactored.mt_test"
-                * cd ~mnovak/projects/align_resolver; treex -Len -Ssrc Read::Treex from=@data/gold_aligned.mgiza_on_czeng/dev.list Align::T::Supervised::PrintData align_language=cs node_types=all_anaph
+                * cd ~mnovak/projects/align_coref; treex -Len -Ssrc Read::Treex from=@data/gold_aligned.mgiza_on_czeng/dev.list Align::T::Supervised::PrintData align_language=cs node_types=all_anaph
                     - if the changes in CR do not affect supervised alignment
         * feature extractors
             - an abstract subclass Tool::ML::Ranker::Features (used to be a role but changed to enable/disable unary features prefixing)
@@ -25,8 +25,8 @@ treex git repository:
                 Tool::Coreference::Features::Distance, Tool::Coreference::Features::Morphological, Tool::Coreference::Features::TectoSyntax,
                 Tool::Coreference::remove_PronCoref
             - using Tool::Coreference::NodeFilter to assign classes to nodes
-            - a Block role Block::Filter::Node::T directly uses it to access only the tnodes that belong to one of the predefined classes:
-                attribute 'node_types', a method 'process_filtered_tnode' must be implemented
+            - the Block::Filter::Node role directly uses it to access only the [at]nodes that belong to one of the predefined classes:
+                attribute 'node_types', a method 'process_filtered_[at]node' must be implemented
             - if the 'node_types' is used as a feature in some feature selector, the list must be filtered to rule out labels that has nothing
                 to do with the feature selector, e.g. the constant %POSSIBLE_NODE_TYPES in Tool::Align::Features
         * ante cands getter
