@@ -2,7 +2,8 @@
 
 language=$1
 data=$2
-tmp_dir=$3
+category=$3
+tmp_dir=$4
 
 #last_n=`find tmp/cr_pretty_print -maxdepth 1 -mindepth 1 -path "*/run-*" -type d | cut -f3 -d'/' | cut -f1 -d'_' | cut -f2 -d'-' | sort | tail -n1` || 001
 #next_n=`perl -e 'printf "%03d", $ARGV[0]+1' $last_n`
@@ -15,7 +16,7 @@ mkdir -p $tmp_dir/parts
 
 treex -p --jobs 50 --workdir=$tmp_dir/run -L$language -Ssrc \
     Read::Treex from=\'$data\' \
-    Util::Eval tnode='if ($tnode->wild->{coref_diag}{is_anaph}) { my @antes = $tnode->get_coref_nodes; $_->wild->{coref_diag}{sys_ante_for}{$tnode->id} = 1 foreach (@antes) }' \
+    Util::Eval tnode="use Treex::Tool::Coreference::NodeFilter; if (Treex::Tool::Coreference::NodeFilter::matches(\$tnode, [\"$category\"])) { \$tnode->wild->{coref_diag}{is_anaph} = 1; my @antes = \$tnode->get_coref_nodes; \$_->wild->{coref_diag}{sys_ante_for}{\$tnode->id} = 1 foreach (@antes) }" \
     Coref::RemoveLinks \
     Write::Treex path="$tmp_dir/trees.del" \
     T2T::CopyCorefFromAlignment selector=ref \

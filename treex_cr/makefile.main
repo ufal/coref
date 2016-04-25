@@ -23,18 +23,17 @@ resolve-dev resolve-eval resolve :
 		Read::Treex from=@$(DATA) \
 		Coref::RemoveLinks type=all \
 		Scen::Coref language=$(LANGUAGE) modules=$(COREF_MODULES) \
-		$(MAIN_COREF_BLOCK) diagnostics=1 \
+		$(MAIN_COREF_BLOCK) \
 		Write::Treex path=$(NEW_TRY)/resolve/treexfiles
 
-baseline-dev : DATA=$(DEV_DATA)
-baseline-eval : DATA=$(EVAL_DATA)
-baseline : DATA=$(DEV_DATA)
+baseline-dev : DATA=$(DEV_BASELINE_DATA)
+baseline-eval : DATA=$(EVAL_BASELINE_DATA)
+baseline : DATA=$(DEV_BASELINE_DATA)
 baseline-dev baseline-eval baseline :
 	mkdir -p $(NEW_TRY)/resolve/treexfiles
 	echo "BASELINE: $(D)" > $(NEW_TRY)/description
 	treex $(LRC_FLAG) -L$(LANGUAGE) -Ssrc --workdir=$(NEW_TRY)/resolve/runs \
 		Read::Treex from=@$(DATA) \
-		Coref::RemoveLinks type=all \
 		$(BASELINE_SCEN) \
 		Write::Treex path=$(NEW_TRY)/resolve/treexfiles
 	
@@ -71,7 +70,7 @@ eval : ../../bin/conll_scorer/scorer.pl
 #	$< all $(NEW_TRY)/eval/results.semeval.key.conll $(NEW_TRY)/eval/results.semeval.response.conll none > $(NEW_TRY)/eval/eval.conll.txt
 
 pretty_print :
-	../../bin/cr_pretty_print.sh $(LANGUAGE) '!$(NEW_TRY)/resolve/treexfiles/*.streex' $(NEW_TRY)/pretty_print
+	../../bin/cr_pretty_print.sh $(LANGUAGE) '!$(NEW_TRY)/resolve/treexfiles/*.streex' '$(ANAPH_TYPE)' $(NEW_TRY)/pretty_print
 	
 #export DESCRIPTION=`cat $(NEW_TRY)/description`; \
 
@@ -80,6 +79,11 @@ pretty_print :
 eval-% pretty_print-%:
 	export new_try=`ls -d $(RUNS_DIR)/$*_*` && \
 	make $(@:-$*=) NEW_NUM=$* NEW_TRY=$$new_try DATE=`echo $$new_try | cut -d_ -f2-`
+
+diff-% :
+	v1=`echo "$*" | cut -f1 -d':'`; \
+	v2=`echo "$*" | cut -f2 -d':'`; \
+	../../bin/diff_cr_pretty_prints.pl $(RUNS_DIR)/$$v1_*/pretty_print/all.txt $(RUNS_DIR)/$$v2_*/pretty_print/all.txt | less -SR
 
 ../../bin/conll_scorer/scorer.pl :
 	wget -O ../../bin/scorer.tar.gz http://conll.cemantix.org/download/reference-coreference-scorers.v8.01.tar.gz
