@@ -26,6 +26,18 @@ resolve-dev resolve-eval resolve :
 		$(MAIN_COREF_BLOCK) diagnostics=1 \
 		Write::Treex path=$(NEW_TRY)/resolve/treexfiles
 
+baseline-dev : DATA=$(DEV_DATA)
+baseline-eval : DATA=$(EVAL_DATA)
+baseline : DATA=$(DEV_DATA)
+baseline-dev baseline-eval baseline :
+	mkdir -p $(NEW_TRY)/resolve/treexfiles
+	echo "BASELINE: $(D)" > $(NEW_TRY)/description
+	treex $(LRC_FLAG) -L$(LANGUAGE) -Ssrc --workdir=$(NEW_TRY)/resolve/runs \
+		Read::Treex from=@$(DATA) \
+		Coref::RemoveLinks type=all \
+		$(BASELINE_SCEN) \
+		Write::Treex path=$(NEW_TRY)/resolve/treexfiles
+	
 eval : ../../bin/conll_scorer/scorer.pl
 	mkdir -p $(NEW_TRY)/eval/results.simple
 	treex $(LRC_FLAG) -L$(LANGUAGE) -Sref --workdir=$(NEW_TRY)/eval/runs \
@@ -33,6 +45,10 @@ eval : ../../bin/conll_scorer/scorer.pl
 		Coref::SimpleEval node_types="$(ANAPH_TYPE)" path="$(NEW_TRY)/eval/results.simple"
 	find $(NEW_TRY)/eval/results.simple -name '*.tsv' | sort | xargs cat > $(NEW_TRY)/eval/results.simple.tsv
 	cat $(NEW_TRY)/eval/results.simple.tsv | $(MLYN_DIR)/scripts/eval.pl --acc --prf > $(NEW_TRY)/eval/eval.simple.txt
+	fscore=`cat $(NEW_TRY)/eval/eval.simple.txt | sed -n '4p'`; \
+	desc=`cat $(NEW_TRY)/description`; \
+	echo -e "$(DATE)\t$$fscore\t$(NEW_TRY)\t$$desc" >> stats.txt
+
 
 ## Evaluation with the standard coreference measures as well
 ## TODO: Coref::PrepareSpecializedEval must be fixed
