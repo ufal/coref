@@ -83,7 +83,7 @@ eval-% pretty_print-%:
 diff-% :
 	v1=`echo "$*" | cut -f1 -d':'`; \
 	v2=`echo "$*" | cut -f2 -d':'`; \
-	../../bin/diff_cr_pretty_prints.pl $(RUNS_DIR)/$$v1*/pretty_print/all.txt $(RUNS_DIR)/$$v2*/pretty_print/all.txt
+	../../bin/diff_cr_pretty_prints.pl $(RUNS_DIR)/$$v1*/pretty_print/all.txt $(RUNS_DIR)/$$v2*/pretty_print/all.txt | less -SR
 
 ../../bin/conll_scorer/scorer.pl :
 	wget -O ../../bin/scorer.tar.gz http://conll.cemantix.org/download/reference-coreference-scorers.v8.01.tar.gz
