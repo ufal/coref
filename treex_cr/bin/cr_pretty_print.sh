@@ -16,11 +16,11 @@ mkdir -p $tmp_dir/parts
 
 treex -p --jobs 50 --workdir=$tmp_dir/run -L$language -Ssrc \
     Read::Treex from=\'$data\' \
-    Util::Eval tnode="use Treex::Tool::Coreference::NodeFilter; if (Treex::Tool::Coreference::NodeFilter::matches(\$tnode, [\"$category\"])) { \$tnode->wild->{coref_diag}{is_anaph} = 1; \$tnode->wild->{coref_diag}{cand_for}{\$tnode->id} = 1; my @antes = \$tnode->get_coref_nodes; foreach (@antes) { \$_->wild->{coref_diag}{sys_ante_for}{\$tnode->id} = 1; \$_->wild->{coref_diag}{cand_for}{\$tnode->id} = 1;} }" \
+    Coref::PrettyPrint::LabelSys node_types="$category" \
     Coref::RemoveLinks \
     Write::Treex path="$tmp_dir/trees.del" \
     T2T::CopyCorefFromAlignment selector=ref \
-    Util::Eval tnode='my @antes = $tnode->get_coref_chain; $_->wild->{coref_diag}{key_ante_for}{$tnode->id} = 1 foreach (@antes)' \
+    Coref::PrettyPrint::LabelKey \
     Write::Treex path="$tmp_dir/trees" \
     Coref::PrettyPrint path="$tmp_dir/parts"
 find $tmp_dir/parts -name '*.txt' | sort | xargs cat > $tmp_dir/all.txt
