@@ -2,6 +2,6 @@ LANGUAGE=cs
 
 DATA_NAME=pdt
 
-TRAIN_DATA=${CZENG_COREF_DIR}/data/cs/analysed/pdt/train/0004/list
-DEV_DATA=${CZENG_COREF_DIR}/data/cs/analysed/pdt/dev/0004/list
-EVAL_DATA=${CZENG_COREF_DIR}/data/cs/analysed/pdt/eval/0004/list
+TRAIN_DATA=${CZENG_COREF_DIR}/data/cs/analysed/pdt/train/0005/list
+DEV_DATA=${CZENG_COREF_DIR}/data/cs/analysed/pdt/dev/0005/list
+EVAL_DATA=${CZENG_COREF_DIR}/data/cs/analysed/pdt/eval/0005/list
