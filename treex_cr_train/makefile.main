@@ -5,12 +5,13 @@ ifeq ($(LRC),1)
 LRC_FLAG=-p --jobs 100 --workdir=tmp/treex_runs/{NNN}-run.{XXXX}
 endif
 
-ALL_DATA_TABLES=train.$(DATA_NAME).table.gz dev.$(DATA_NAME).table.gz eval.$(DATA_NAME).table.gz
+ALL_DATA_TABLES=dev.$(DATA_NAME).table.gz train.$(DATA_NAME).table.gz
+#eval.$(DATA_NAME).table.gz
 
 train_table : $(ALL_DATA_TABLES)
 train.$(DATA_NAME).table.gz : DATA=$(TRAIN_DATA)
 dev.$(DATA_NAME).table.gz : DATA=$(DEV_DATA)
-eval.$(DATA_NAME).table.gz : DATA=$(EVAL_DATA)
+#eval.$(DATA_NAME).table.gz : DATA=$(EVAL_DATA)
 $(ALL_DATA_TABLES) :
 	treex $(LRC_FLAG) -L$(LANGUAGE) -Ssrc \
 		Read::Treex from=@$(DATA) \
@@ -20,11 +21,13 @@ $(ALL_DATA_TABLES) :
 	gzip -c > $@
 
 
-DATA_LIST=TRAIN_DATA DEV_DATA EVAL_DATA
+#DATA_LIST=TRAIN_DATA DEV_DATA EVAL_DATA
+DATA_LIST=TRAIN_DATA DEV_DATA
 TEST_DATA_LIST=$(DATA_LIST)
 
 ML_METHOD_LIST=../../ml_method.conf
 
+        #EVAL_DATA=eval.$(DATA_NAME).table.gz 
 train_test : $(ALL_DATA_TABLES)
 	$(ML_FRAMEWORK_DIR)/run.sh -f ../../ml_params.ini \
         EXPERIMENT_TYPE=train_test \
@@ -32,7 +35,6 @@ train_test : $(ALL_DATA_TABLES)
 		TEST_DATA_LIST="$(TEST_DATA_LIST)" \
         TRAIN_DATA=train.$(DATA_NAME).table.gz \
         DEV_DATA=dev.$(DATA_NAME).table.gz \
-        EVAL_DATA=eval.$(DATA_NAME).table.gz \
         FEATSET_LIST=$(FEATSET_LIST) \
         ML_METHOD_LIST=$(ML_METHOD_LIST) \
         LRC=$(LRC) \
