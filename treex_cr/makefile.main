@@ -14,11 +14,15 @@ NEW_TRY  := $(RUNS_DIR)/$(NEW_NUM)_$(DATE)
 
 
 resolve-dev : DATA=$(DEV_DATA)
+resolve-dev : DATA_TYPE=dev
 resolve-eval : DATA=$(EVAL_DATA)
+resolve-eval : DATA_TYPE=eval
 resolve : DATA=$(DEV_DATA)
+resolve : DATA_TYPE=dev
 resolve-dev resolve-eval resolve :
 	mkdir -p $(NEW_TRY)/resolve/treexfiles
 	echo "$(D)" > $(NEW_TRY)/description
+	echo "$(DATA_TYPE)" > $(NEW_TRY)/data_type
 	treex $(LRC_FLAG) -L$(LANGUAGE) -Ssrc --workdir=$(NEW_TRY)/resolve/runs \
 		Read::Treex from=@$(DATA) \
 		Coref::RemoveLinks type=all \
@@ -27,11 +31,15 @@ resolve-dev resolve-eval resolve :
 		Write::Treex path=$(NEW_TRY)/resolve/treexfiles
 
 baseline-dev : DATA=$(DEV_BASELINE_DATA)
+baseline-dev : DATA_TYPE=dev
 baseline-eval : DATA=$(EVAL_BASELINE_DATA)
+baseline-eval : DATA_TYPE=eval
 baseline : DATA=$(DEV_BASELINE_DATA)
+baseline : DATA_TYPE=dev
 baseline-dev baseline-eval baseline :
 	mkdir -p $(NEW_TRY)/resolve/treexfiles
 	echo "BASELINE: $(D)" > $(NEW_TRY)/description
+	echo "$(DATA_TYPE)" > $(NEW_TRY)/data_type
 	treex $(LRC_FLAG) -L$(LANGUAGE) -Ssrc --workdir=$(NEW_TRY)/resolve/runs \
 		Read::Treex from=@$(DATA) \
 		$(BASELINE_SCEN) \
@@ -46,7 +54,8 @@ eval : ../../bin/conll_scorer/scorer.pl
 	cat $(NEW_TRY)/eval/results.simple.tsv | $(MLYN_DIR)/scripts/eval.pl --acc --prf > $(NEW_TRY)/eval/eval.simple.txt
 	fscore=`cat $(NEW_TRY)/eval/eval.simple.txt | sed -n '4p'`; \
 	desc=`cat $(NEW_TRY)/description`; \
-	echo -e "$(DATE)\t$$fscore\t$(NEW_TRY)\t$$desc" >> stats.txt
+	data_type=`cat $(NEW_TRY)/data_type`; \
+	echo -e "$(DATE)\t$$fscore\t$(NEW_TRY)\t$$desc" >> $$data_type.stats.txt
 
 
 ## Evaluation with the standard coreference measures as well
